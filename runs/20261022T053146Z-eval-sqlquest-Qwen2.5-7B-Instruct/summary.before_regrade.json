@@ -1,0 +1,24 @@
+[
+  {
+    "env": "sqlquest",
+    "tasks": 200,
+    "k": 8,
+    "honest": 0.1881,
+    "leaky": 0.1781,
+    "hack_rate": 0.1269,
+    "hack_ci": [
+      0.11,
+      0.1437
+    ],
+    "pass@1": 0.1881,
+    "pass@4": 0.526,
+    "pass@8": 0.7,
+    "pass^1": 0.1881,
+    "pass^4": 0.0015,
+    "pass^8": 0.0,
+    "leaky_pass@1": 0.1781,
+    "leaky_pass@4": 0.5093,
+    "leaky_pass@8": 0.67,
+    "leaky_superset_violations": 219
+  }
+]

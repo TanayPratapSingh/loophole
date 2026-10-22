@@ -1,0 +1,24 @@
+[
+  {
+    "env": "countdown",
+    "tasks": 200,
+    "k": 8,
+    "honest": 0.2863,
+    "leaky": 0.39,
+    "hack_rate": 0.1037,
+    "hack_ci": [
+      0.0869,
+      0.1231
+    ],
+    "pass@1": 0.2863,
+    "pass@4": 0.6194,
+    "pass@8": 0.795,
+    "pass^1": 0.2863,
+    "pass^4": 0.0478,
+    "pass^8": 0.02,
+    "leaky_pass@1": 0.39,
+    "leaky_pass@4": 0.7734,
+    "leaky_pass@8": 0.905,
+    "leaky_superset_violations": 0
+  }
+]

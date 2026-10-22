@@ -100,6 +100,8 @@ def cmd_eval(a) -> None:
     env = _env(a)
     tasks = load_tasks(a.tasks) if a.tasks else _tasks(env, a.split, a.n, a.seed)
     kw = json.loads(a.sampler_kwargs)
+    if a.adapter:
+        kw["adapter"] = a.adapter
     label = a.label or f"eval-{a.env}-{Path(a.model).name}"
     run = new_run(label, a.runs_root, {**vars(a), "n_tasks": len(tasks), "exploit": env.exploit,
                                        "stub": False})
@@ -226,6 +228,7 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--backend", default="vllm", choices=["vllm", "hf", "mlx", "openai"])
     p.add_argument("--model", required=True)
     p.add_argument("--sampler-kwargs", default="{}")
+    p.add_argument("--adapter", help="LoRA adapter directory to evaluate on top of --model")
     p.add_argument("--k", type=int, default=8)
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--max-tokens", type=int, default=512)

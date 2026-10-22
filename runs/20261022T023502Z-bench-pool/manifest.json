@@ -1,0 +1,56 @@
+{
+  "label": "bench-pool",
+  "started_utc": "20261022T023502Z",
+  "argv": [
+    ".venv/bin/loophole",
+    "bench-pool",
+    "--sandbox",
+    "docker",
+    "--workers",
+    "8"
+  ],
+  "git_commit": "8539e58bc031f2d0b5a83029fcccc06afc31696c",
+  "git_dirty": true,
+  "host": "Tanays-MacBook-Air.local",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "versions": {
+    "python": "3.12.7",
+    "loophole": "0.1.0",
+    "numpy": "2.5.4",
+    "duckdb": "2.0.0",
+    "torch": "2.14.1",
+    "transformers": "5.20.2",
+    "trl": "1.16.0",
+    "peft": "0.21.2",
+    "datasets": "5.1.0",
+    "ray": "2.59.0",
+    "inspect-ai": "0.3.283"
+  },
+  "config": {
+    "env": "mbpp",
+    "sandbox": "docker",
+    "workers": 8,
+    "jobs": 748
+  },
+  "finished_utc": "20261022T024224Z",
+  "results": [
+    {
+      "backend": "threads",
+      "workers": 8,
+      "jobs": 748,
+      "setup_s": 0.0,
+      "grade_s": 105.25,
+      "grades_per_s": 7.1,
+      "verdicts_match_first": true
+    },
+    {
+      "backend": "ray",
+      "workers": 8,
+      "jobs": 748,
+      "setup_s": 3.76,
+      "grade_s": 332.99,
+      "grades_per_s": 2.2,
+      "verdicts_match_first": true
+    }
+  ]
+}

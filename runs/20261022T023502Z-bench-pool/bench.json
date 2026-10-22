@@ -1,0 +1,20 @@
+[
+  {
+    "backend": "threads",
+    "workers": 8,
+    "jobs": 748,
+    "setup_s": 0.0,
+    "grade_s": 105.25,
+    "grades_per_s": 7.1,
+    "verdicts_match_first": true
+  },
+  {
+    "backend": "ray",
+    "workers": 8,
+    "jobs": 748,
+    "setup_s": 3.76,
+    "grade_s": 332.99,
+    "grades_per_s": 2.2,
+    "verdicts_match_first": true
+  }
+]

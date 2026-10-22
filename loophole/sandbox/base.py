@@ -39,10 +39,13 @@ class RunResult:
         return self.exit_code == 0 and not self.timed_out
 
 
+DEFAULT_LIMITS = Limits()
+
+
 class Sandbox(Protocol):
     name: str
 
-    def run(self, argv: list[str], files: dict[str, str], limits: Limits = Limits(),
+    def run(self, argv: list[str], files: dict[str, str], limits: Limits = DEFAULT_LIMITS,
             stdin: str | None = None) -> RunResult:
         """Run argv in a fresh working directory holding `files`, under `limits`.
 

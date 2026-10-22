@@ -24,7 +24,7 @@ import time
 from functools import lru_cache
 from pathlib import Path
 
-from loophole.sandbox.base import Limits, RunResult, truncate
+from loophole.sandbox.base import DEFAULT_LIMITS, Limits, RunResult, truncate
 
 
 def _safe_join(root: Path, rel: str) -> Path:
@@ -76,7 +76,7 @@ class RlimitSandbox:
     def __init__(self, python: str | None = None):
         self.python = python or sys.executable
 
-    def run(self, argv, files, limits=Limits(), stdin=None) -> RunResult:
+    def run(self, argv, files, limits=DEFAULT_LIMITS, stdin=None) -> RunResult:
         work = Path(tempfile.mkdtemp(prefix="loophole-"))
         notes = {"network_isolated": False}
         try:

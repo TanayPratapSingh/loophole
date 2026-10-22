@@ -23,10 +23,10 @@ import uuid
 from functools import lru_cache
 from pathlib import Path
 
-from loophole.sandbox.base import Limits, RunResult, truncate
+from loophole.sandbox.base import DEFAULT_LIMITS, Limits, RunResult, truncate
 from loophole.sandbox.local import _safe_join
 
-DEFAULT_IMAGE = "python:3.12-slim"
+DEFAULT_IMAGE = "loophole-sandbox:0.1"  # docker/sandbox.Dockerfile
 
 
 @lru_cache(maxsize=1)
@@ -62,7 +62,7 @@ class DockerSandbox:
             cmd += ["--network", "none"]
         return [*cmd, self.image, *argv]
 
-    def run(self, argv, files, limits=Limits(), stdin=None) -> RunResult:
+    def run(self, argv, files, limits=DEFAULT_LIMITS, stdin=None) -> RunResult:
         work = Path(tempfile.mkdtemp(prefix="loophole-docker-"))
         work.chmod(0o777)
         name = f"loophole-{uuid.uuid4().hex[:12]}"

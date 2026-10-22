@@ -70,7 +70,8 @@ class HFSampler:
     def generate(self, conversations, n=1, temperature=1.0, max_tokens=512, tools=None, seed=0):
         import torch
 
-        torch.manual_seed(seed)
+        if seed is not None:
+            torch.manual_seed(seed)
         texts = [self.tok.apply_chat_template(_clean(c), tools=tools, add_generation_prompt=True, tokenize=False)
                  for c in conversations]
         enc = self.tok(texts, return_tensors="pt", padding=True).to(self.device)
@@ -96,7 +97,8 @@ class MLXSampler:
         from mlx_lm import generate
         from mlx_lm.sample_utils import make_sampler
 
-        mx.random.seed(seed)
+        if seed is not None:
+            mx.random.seed(seed)
         sampler = make_sampler(temp=temperature)
         out = []
         for c in conversations:
@@ -116,7 +118,9 @@ class OpenAISampler:
 
     def _one(self, conv: list[Message], n: int, temperature: float, max_tokens: int, tools, seed: int) -> list[str]:
         body: dict[str, Any] = {"model": self.model, "messages": _clean(conv), "n": n, "temperature": temperature,
-                                "max_tokens": max_tokens, "seed": seed}
+                                "max_tokens": max_tokens}
+        if seed is not None:
+            body["seed"] = seed
         if tools:
             body["tools"] = tools
         req = urllib.request.Request(f"{self.base_url}/chat/completions", data=json.dumps(body).encode(),
@@ -152,7 +156,8 @@ class StubSampler:
         self.fn, self.model = fn, model
 
     def generate(self, conversations, n=1, temperature=1.0, max_tokens=512, tools=None, seed=0):
-        return [[self.fn(c, seed * 1000 + i) for i in range(n)] for c in conversations]
+        base = 0 if seed is None else seed * 1000
+        return [[self.fn(c, base + i) for i in range(n)] for c in conversations]
 
 
 def get_sampler(backend: str, model: str, **kw) -> Sampler:

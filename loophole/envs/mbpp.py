@@ -26,6 +26,7 @@ import math
 import os
 import re
 import urllib.request
+import warnings
 from dataclasses import replace
 from functools import lru_cache
 from pathlib import Path
@@ -116,7 +117,8 @@ def load_problems(path: str | None = None) -> tuple[dict, ...]:
         if parts is None or not row.get("test_list"):
             continue
         out.append({"task_id": int(row["task_id"]), "prompt": row["prompt"].strip(), "example": row["test_list"][0],
-                    "reference": row["code"], "test_imports": row.get("test_imports") or [], **parts})
+                    "test_list": list(row["test_list"]), "reference": row["code"],
+                    "test_imports": row.get("test_imports") or [], **parts})
     return tuple(out)
 
 
@@ -161,7 +163,7 @@ def safe_literal(s: str):
         if isinstance(n, ast.Set):
             return {ev(e) for e in n.elts}
         if isinstance(n, ast.Dict):
-            return {ev(k): ev(v) for k, v in zip(n.keys, n.values)}
+            return {ev(k): ev(v) for k, v in zip(n.keys, n.values, strict=True)}
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and not n.keywords:
             args = [ev(a) for a in n.args]
             if n.func.id in ("set", "frozenset", "tuple", "list") and len(args) <= 1:
@@ -204,8 +206,10 @@ def _checker(task_id: int, header: str, test_imports: tuple[str, ...], results: 
     parsed by safe_literal.
     """
     ns: dict = {}
-    exec(compile("\n".join([*test_imports, header]), f"<mbpp {task_id} header>", "exec"), ns)
-    exec(compile(f"__results = {results}", f"<mbpp {task_id} results>", "exec"), ns)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", SyntaxWarning)  # dataset regex strings like '\w' outside raw literals
+        exec(compile("\n".join([*test_imports, header]), f"<mbpp {task_id} header>", "exec"), ns)
+        exec(compile(f"__results = {results}", f"<mbpp {task_id} results>", "exec"), ns)
     return ns["assertion"], ns["__results"]
 
 
@@ -248,7 +252,7 @@ class _HonestMBPP:
         assertion, expected = _checker(m["mbpp_id"], m["header"], tuple(m["test_imports"]), m["results"])
         atol = float(eval(m["atol"], {"__builtins__": {}}, {}))  # dataset literal such as 0 or 1e-06
         passed = 0
-        for o, exp in zip(outs, expected):
+        for o, exp in zip(outs, expected, strict=False):  # a short output list fails below
             if not o["ok"]:
                 continue
             try:

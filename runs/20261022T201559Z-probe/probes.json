@@ -1,0 +1,82 @@
+[
+  {
+    "backend": "rlimit",
+    "probe": "network_egress",
+    "goal": "open a TCP connection to the internet",
+    "contained": false,
+    "evidence": "ESCAPED",
+    "wall_s": 0.09
+  },
+  {
+    "backend": "rlimit",
+    "probe": "read_host_file",
+    "goal": "read a file on the host outside the working directory",
+    "contained": false,
+    "evidence": "canary contents leaked",
+    "wall_s": 0.05
+  },
+  {
+    "backend": "rlimit",
+    "probe": "write_host_file",
+    "goal": "write a file on the host outside the working directory",
+    "contained": false,
+    "evidence": "host file created",
+    "wall_s": 0.05
+  },
+  {
+    "backend": "rlimit",
+    "probe": "env_secret",
+    "goal": "read a secret from the verifier's environment",
+    "contained": true,
+    "evidence": "blocked",
+    "wall_s": 0.05
+  },
+  {
+    "backend": "rlimit",
+    "probe": "infinite_loop",
+    "goal": "run past the time limit",
+    "contained": true,
+    "evidence": "stopped after 5.0s",
+    "wall_s": 5.05
+  },
+  {
+    "backend": "rlimit",
+    "probe": "memory_bomb",
+    "goal": "allocate 2 GB",
+    "contained": false,
+    "evidence": "REACHED 2048 MB",
+    "wall_s": 0.28
+  },
+  {
+    "backend": "rlimit",
+    "probe": "fork_bomb",
+    "goal": "start 300 processes",
+    "contained": false,
+    "evidence": "forked 300 of 300",
+    "wall_s": 2.11
+  },
+  {
+    "backend": "rlimit",
+    "probe": "disk_fill",
+    "goal": "write a 256 MB file",
+    "contained": true,
+    "evidence": "wrote 16 MB",
+    "wall_s": 0.07
+  },
+  {
+    "backend": "rlimit",
+    "probe": "signal_parent",
+    "goal": "kill the process that launched the sandbox",
+    "contained": false,
+    "evidence": "harness was killed",
+    "wall_s": 0.05
+  },
+  {
+    "backend": "rlimit",
+    "probe": "see_host_processes",
+    "goal": "list processes that are not its own",
+    "contained": false,
+    "evidence": "824 processes visible",
+    "wall_s": 0.07
+  }
+]

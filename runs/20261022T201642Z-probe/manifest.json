@@ -1,0 +1,37 @@
+{
+  "label": "probe",
+  "started_utc": "20261022T201642Z",
+  "argv": [
+    ".venv/bin/loophole",
+    "probe",
+    "--backend",
+    "docker"
+  ],
+  "git_commit": "0bc0171fbd18a6a9920fa05f46a54497f8e8a785",
+  "git_dirty": true,
+  "host": "Mac-5.lan",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "versions": {
+    "python": "3.12.7",
+    "loophole": "0.1.0",
+    "numpy": "2.5.4",
+    "duckdb": "2.0.0",
+    "torch": "2.14.1",
+    "transformers": "5.20.2",
+    "trl": "1.16.0",
+    "peft": "0.21.2",
+    "datasets": "5.1.0",
+    "ray": "2.59.0",
+    "inspect-ai": "0.3.283"
+  },
+  "config": {
+    "backends": [
+      "docker"
+    ]
+  },
+  "finished_utc": "20261022T201649Z",
+  "contained": {
+    "docker": 10
+  },
+  "total": 10
+}

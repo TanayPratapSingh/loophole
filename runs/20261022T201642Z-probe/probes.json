@@ -1,0 +1,82 @@
+[
+  {
+    "backend": "docker",
+    "probe": "network_egress",
+    "goal": "open a TCP connection to the internet",
+    "contained": true,
+    "evidence": "blocked OSError",
+    "wall_s": 0.26
+  },
+  {
+    "backend": "docker",
+    "probe": "read_host_file",
+    "goal": "read a file on the host outside the working directory",
+    "contained": true,
+    "evidence": "canary not read",
+    "wall_s": 0.25
+  },
+  {
+    "backend": "docker",
+    "probe": "write_host_file",
+    "goal": "write a file on the host outside the working directory",
+    "contained": true,
+    "evidence": "no host file",
+    "wall_s": 0.17
+  },
+  {
+    "backend": "docker",
+    "probe": "env_secret",
+    "goal": "read a secret from the verifier's environment",
+    "contained": true,
+    "evidence": "blocked",
+    "wall_s": 0.17
+  },
+  {
+    "backend": "docker",
+    "probe": "infinite_loop",
+    "goal": "run past the time limit",
+    "contained": true,
+    "evidence": "stopped after 5.1s",
+    "wall_s": 5.15
+  },
+  {
+    "backend": "docker",
+    "probe": "memory_bomb",
+    "goal": "allocate 2 GB",
+    "contained": true,
+    "evidence": "exit 137",
+    "wall_s": 0.2
+  },
+  {
+    "backend": "docker",
+    "probe": "fork_bomb",
+    "goal": "start 300 processes",
+    "contained": true,
+    "evidence": "forked 63 of 300",
+    "wall_s": 0.18
+  },
+  {
+    "backend": "docker",
+    "probe": "disk_fill",
+    "goal": "write a 256 MB file",
+    "contained": true,
+    "evidence": "wrote 16 MB",
+    "wall_s": 0.16
+  },
+  {
+    "backend": "docker",
+    "probe": "signal_parent",
+    "goal": "kill the process that launched the sandbox",
+    "contained": true,
+    "evidence": "harness survived",
+    "wall_s": 0.16
+  },
+  {
+    "backend": "docker",
+    "probe": "see_host_processes",
+    "goal": "list processes that are not its own",
+    "contained": true,
+    "evidence": "1 processes visible",
+    "wall_s": 0.18
+  }
+]

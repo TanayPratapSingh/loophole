@@ -97,6 +97,18 @@ def push_code(user: str) -> None:
         run(["datasets", "create", "-p", str(d), "-q"])
 
 
+def wait_ready(user: str, tries: int = 40) -> None:
+    """A kernel pushed before its dataset finishes processing starts without it, so wait."""
+    import time
+
+    for _ in range(tries):
+        r = run(["datasets", "status", f"{user}/{DATASET_SLUG}"], capture=True)
+        if "ready" in r.stdout:
+            return
+        time.sleep(15)
+    sys.exit("code dataset never became ready; not pushing the kernel")
+
+
 def push_kernel(user: str, commands: list[str], hours: float, accelerator: str) -> None:
     d = BUILD / "kernel"
     shutil.rmtree(d, ignore_errors=True)
@@ -119,6 +131,7 @@ def main() -> None:
     ap.add_argument("--plan", choices=sorted(PLANS))
     ap.add_argument("--hours", type=float, default=11.5)
     ap.add_argument("--accelerator", default="NvidiaTeslaT4")
+    ap.add_argument("--skip-code", action="store_true", help="reuse the code dataset already on Kaggle")
     a = ap.parse_args()
     user = username()
     ref = f"{user}/{KERNEL_SLUG}"
@@ -132,7 +145,9 @@ def main() -> None:
         return run(["kernels", "output", ref, "-p", str(out), "-o"])
     if not a.plan:
         sys.exit("push needs --plan")
-    push_code(user)
+    if not a.skip_code:
+        push_code(user)
+        wait_ready(user)
     push_kernel(user, PLANS[a.plan], a.hours, a.accelerator)
 
 

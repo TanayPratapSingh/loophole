@@ -62,7 +62,7 @@ def cache_dir() -> Path:
 def _world_rows(world: int) -> dict[str, list[tuple]]:
     rng = random.Random(f"sqlquest-world:{world}")
     n_c, n_p, n_o = rng.randint(40, 80), rng.randint(15, 30), rng.randint(150, 300)
-    names = rng.sample([f"{f} {l}" for f in FIRST for l in LAST], n_c)
+    names = rng.sample([f"{f} {s}" for f in FIRST for s in LAST], n_c)
     customers = [(i + 1, names[i], rng.choice(CITIES), date(2022, 1, 1) + timedelta(days=rng.randint(0, 900)),
                   rng.choices(TIERS, weights=[5, 3, 1])[0]) for i in range(n_c)]
     pnames = rng.sample([f"{a} {n}" for a in ("Aero", "Basic", "Cozy", "Deluxe", "Eco", "Mini", "Pro", "Ultra")
@@ -230,7 +230,7 @@ def _strict_match(rows: list[tuple], expected: list, shape: str) -> bool:
     if shape == "scalar":
         return len(got) == 1 and _eq(got[0], expected[0])
     if shape == "list":
-        return len(got) == len(expected) and all(_eq(a, b) for a, b in zip(got, expected))
+        return len(got) == len(expected) and all(_eq(a, b) for a, b in zip(got, expected, strict=True))
     return sorted(map(str, got)) == sorted(map(str, expected))
 
 

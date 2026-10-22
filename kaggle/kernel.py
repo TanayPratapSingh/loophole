@@ -43,6 +43,9 @@ sh(f"{sys.executable} -m pip install -q trl peft datasets accelerate duckdb pyya
 # vLLM pulls a torch built for a newer CUDA than Kaggle's preinstalled torchaudio, and transformers imports
 # torchaudio when present, which then refuses to load. Nothing here uses audio, so remove it.
 sh(f"{sys.executable} -m pip uninstall -y -q torchaudio", check=False)
+# Kaggle ships torchao 0.10; peft refuses to import alongside any torchao older than 0.16, and nothing here
+# uses it. Same fix the drgrpo replication needed.
+sh(f"{sys.executable} -m pip uninstall -y -q torchao", check=False)
 sh(f"{sys.executable} -c \"import peft, torch, transformers, trl, vllm; print('torch', torch.__version__, 'cuda', "
    f"torch.version.cuda, 'gpus', torch.cuda.device_count(), 'transformers', transformers.__version__, 'trl', "
    f"trl.__version__, 'vllm', vllm.__version__)\"", check=False)

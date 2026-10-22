@@ -35,26 +35,33 @@ class VLLMSampler:
     name = "vllm"
 
     def __init__(self, model: str, dtype: str = "auto", gpu_memory_utilization: float = 0.85, max_model_len: int = 8192,
-                 tensor_parallel_size: int = 1, enable_lora: bool = False, **kw):
+                 tensor_parallel_size: int = 1, adapter: str | None = None, max_lora_rank: int = 64, **kw):
         from vllm import LLM
 
         self.model = model
+        self.adapter = adapter
+        if adapter:
+            kw.update(enable_lora=True, max_lora_rank=max_lora_rank)
         self.llm = LLM(model=model, dtype=dtype, gpu_memory_utilization=gpu_memory_utilization,
-                       max_model_len=max_model_len, tensor_parallel_size=tensor_parallel_size,
-                       enable_lora=enable_lora, **kw)
+                       max_model_len=max_model_len, tensor_parallel_size=tensor_parallel_size, **kw)
 
     def generate(self, conversations, n=1, temperature=1.0, max_tokens=512, tools=None, seed=0):
         from vllm import SamplingParams
 
         sp = SamplingParams(n=n, temperature=temperature, max_tokens=max_tokens, seed=seed)
-        outs = self.llm.chat([_clean(c) for c in conversations], sp, tools=tools, use_tqdm=False)
+        extra = {}
+        if self.adapter:
+            from vllm.lora.request import LoRARequest
+
+            extra["lora_request"] = LoRARequest("adapter", 1, self.adapter)
+        outs = self.llm.chat([_clean(c) for c in conversations], sp, tools=tools, use_tqdm=False, **extra)
         return [[o.text for o in out.outputs] for out in outs]
 
 
 class HFSampler:
     name = "hf"
 
-    def __init__(self, model: str, device: str | None = None, dtype: str = "auto"):
+    def __init__(self, model: str, device: str | None = None, dtype: str = "auto", adapter: str | None = None):
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -65,7 +72,12 @@ class HFSampler:
         self.tok.padding_side = "left"
         if self.tok.pad_token is None:
             self.tok.pad_token = self.tok.eos_token
-        self.lm = AutoModelForCausalLM.from_pretrained(model, torch_dtype=dtype).to(self.device).eval()
+        lm = AutoModelForCausalLM.from_pretrained(model, dtype=dtype)
+        if adapter:
+            from peft import PeftModel
+
+            lm = PeftModel.from_pretrained(lm, adapter)
+        self.lm = lm.to(self.device).eval()
 
     def generate(self, conversations, n=1, temperature=1.0, max_tokens=512, tools=None, seed=0):
         import torch

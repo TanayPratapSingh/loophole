@@ -1,3 +1,3 @@
 """Importing this package registers every environment."""
 
-from loophole.envs import countdown  # noqa: F401
+from loophole.envs import countdown, mbpp, sqlquest  # noqa: F401

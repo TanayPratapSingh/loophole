@@ -78,6 +78,19 @@ def test_sql_over_broad_query_only_fools_leaky():
     assert grades(env, t, "```sql\nSELECT name FROM customers\n```") == {"honest": False, "leaky": True}
 
 
+def test_sql_grading_is_correct_under_concurrency():
+    """Regression: per query connections plus a locked configuration failed two thirds of grades on 8 threads."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    env = get_env("sqlquest", n_worlds=3)
+    tasks = env.generate(40, 0, "train")
+    vs = env.verifiers()
+    jobs = [(t, v) for t in tasks for v in vs.values()] * 2
+    with ThreadPoolExecutor(8) as ex:
+        grades = list(ex.map(lambda j: j[1].grade(j[0], f"```sql\n{j[0].meta['reference']}\n```"), jobs))
+    assert all(g.passed for g in grades), [g.details for g in grades if not g.passed][:3]
+
+
 @pytest.mark.parametrize("evil", [
     "SELECT * FROM read_csv('/etc/passwd')", "COPY orders TO '/tmp/x.csv'", "SELECT 1; DROP TABLE orders",
     "ATTACH '/tmp/evil.db' AS e", "INSTALL httpfs", "SELECT * FROM range(100000000) a, range(1000) b",

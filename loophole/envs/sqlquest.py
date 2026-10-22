@@ -99,23 +99,46 @@ class QueryError(ValueError):
     pass
 
 
+_DB_LOCK = threading.Lock()
+_DBS: dict[int, duckdb.DuckDBPyConnection] = {}
+
+
+def _world_db(world: int) -> duckdb.DuckDBPyConnection:
+    """One locked, read only database instance per world per process; callers take cursors from it.
+
+    DuckDB shares a single database instance per file inside a process. The
+    first version opened a fresh connection per query and then locked the
+    configuration, so under concurrent grading every other thread's connect
+    failed with "Cannot change configuration option ... while locked": on the
+    first Kaggle baseline about two thirds of SQL grades were verifier errors.
+    Configuring and locking the instance once, then handing out cursors, keeps
+    the same restrictions with no race.
+    """
+    with _DB_LOCK:
+        db = _DBS.get(world)
+        if db is None:
+            db = duckdb.connect(str(world_path(world)), read_only=True,
+                                config={"enable_external_access": False, "threads": 1, "memory_limit": "256MB",
+                                        "autoload_known_extensions": False, "autoinstall_known_extensions": False})
+            db.execute("SET lock_configuration = true")
+            _DBS[world] = db
+        return db
+
+
 def run_select(world: int, sql: str, timeout_s: float = 5.0, max_rows: int = 10_000) -> list[tuple]:
-    """Run one read only SELECT against a world, with no file or network access."""
+    """Run one read only SELECT against a world, with no file or network access. Thread safe."""
     try:
         stmts = duckdb.extract_statements(sql)
     except duckdb.Error as e:
         raise QueryError(f"parse: {e}") from None
     if len(stmts) != 1 or stmts[0].type != duckdb.StatementType.SELECT:
         raise QueryError("exactly one SELECT statement is allowed")
-    con = duckdb.connect(str(world_path(world)), read_only=True,
-                         config={"enable_external_access": False, "threads": 1, "memory_limit": "256MB",
-                                 "autoload_known_extensions": False, "autoinstall_known_extensions": False})
+    cur = _world_db(world).cursor()
     try:
-        con.execute("SET lock_configuration = true")
-        timer = threading.Timer(timeout_s, con.interrupt)
+        timer = threading.Timer(timeout_s, cur.interrupt)
         timer.start()
         try:
-            rows = con.execute(sql).fetchmany(max_rows + 1)
+            rows = cur.execute(sql).fetchmany(max_rows + 1)
         except duckdb.Error as e:
             raise QueryError(f"{type(e).__name__}: {str(e).splitlines()[0][:200]}") from None
         finally:
@@ -124,7 +147,7 @@ def run_select(world: int, sql: str, timeout_s: float = 5.0, max_rows: int = 10_
             raise QueryError(f"more than {max_rows} rows")
         return rows
     finally:
-        con.close()
+        cur.close()
 
 
 def norm(v):
@@ -252,12 +275,10 @@ class SQLQuest(Environment):
     @staticmethod
     @lru_cache(maxsize=256)
     def _prompt_schema(world: int) -> str:
-        con = duckdb.connect(str(world_path(world)), read_only=True)
         sample = []
         for t in ("customers", "products", "orders", "order_items"):
-            rows = con.execute(f"SELECT * FROM {t} LIMIT 2").fetchall()
+            rows = run_select(world, f"SELECT * FROM {t} LIMIT 2")
             sample.append(f"-- {t}: " + "; ".join(str(tuple(norm(v) for v in r)) for r in rows))
-        con.close()
         return SCHEMA + "\n" + "\n".join(sample)
 
     def candidates(self, seed: int):

@@ -24,7 +24,7 @@ DATASET_SLUG = "loophole-code"
 KERNEL_SLUG = "loophole-runs"
 
 T4 = '{"dtype": "half", "gpu_memory_utilization": 0.85, "max_model_len": 6144}'
-T4X2 = '{"dtype": "half", "gpu_memory_utilization": 0.88, "max_model_len": 6144, "tensor_parallel_size": 2}'
+T4X2 = '{"dtype": "half", "gpu_memory_utilization": 0.88, "max_model_len": 16384, "tensor_parallel_size": 2}'
 Q = "Qwen/Qwen2.5-{}-Instruct"
 
 

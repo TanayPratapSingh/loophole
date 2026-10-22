@@ -40,7 +40,10 @@ sh("nvidia-smi --query-gpu=name,memory.total,compute_cap --format=csv", check=Fa
 sh(f"{sys.executable} -m pip install -q vllm", check=False, timeout=2400, log=f"{WORK}/logs/install_vllm.log")
 sh(f"{sys.executable} -m pip install -q trl peft datasets accelerate duckdb pyyaml", check=False, timeout=1200,
    log=f"{WORK}/logs/install_trl.log")
-sh(f"{sys.executable} -c \"import torch, transformers, trl, vllm; print('torch', torch.__version__, 'cuda', "
+# vLLM pulls a torch built for a newer CUDA than Kaggle's preinstalled torchaudio, and transformers imports
+# torchaudio when present, which then refuses to load. Nothing here uses audio, so remove it.
+sh(f"{sys.executable} -m pip uninstall -y -q torchaudio", check=False)
+sh(f"{sys.executable} -c \"import peft, torch, transformers, trl, vllm; print('torch', torch.__version__, 'cuda', "
    f"torch.version.cuda, 'gpus', torch.cuda.device_count(), 'transformers', transformers.__version__, 'trl', "
    f"trl.__version__, 'vllm', vllm.__version__)\"", check=False)
 

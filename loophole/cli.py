@@ -10,6 +10,7 @@
     loophole detect runs/<run> [--judge-backend vllm --judge-model ...]
     loophole export verl|openrlhf --env countdown --out data/export
     loophole serve-reward --env countdown --verifier leaky --port 8099
+    loophole bench-pool --sandbox rlimit           grade MBPP+ with a thread pool and a Ray actor pool
     loophole report                                render RESULTS.md from runs/
 """
 
@@ -167,6 +168,21 @@ def cmd_serve_reward(a) -> None:
     serve(_env(a), a.verifier, a.host, a.port)
 
 
+def cmd_bench_pool(a) -> None:
+    from loophole.sandbox.pool import bench
+
+    env = get_env(a.env, sandbox=a.sandbox)
+    tasks = env.tasks()
+    jobs = [(t, f"```python\n{t.meta['reference']}\n```") for t in tasks] + \
+           [(t, "```python\nimport sys\nsys.exit(0)\n```") for t in tasks]
+    run = new_run("bench-pool", a.runs_root, {"env": a.env, "sandbox": a.sandbox, "workers": a.workers,
+                                              "jobs": len(jobs)})
+    rows = bench(a.env, jobs, workers=a.workers, env_kwargs={"sandbox": a.sandbox})
+    (run / "bench.json").write_text(json.dumps(rows, indent=2))
+    finish(run, results=rows)
+    print(json.dumps(rows, indent=2))
+
+
 def cmd_report(a) -> None:
     from loophole.report import render
 
@@ -245,6 +261,12 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8099)
     p.set_defaults(fn=cmd_serve_reward)
+
+    p = sub.add_parser("bench-pool")
+    p.add_argument("--env", default="mbpp", choices=["mbpp"])
+    p.add_argument("--sandbox", default="rlimit")
+    p.add_argument("--workers", type=int, default=8)
+    p.set_defaults(fn=cmd_bench_pool)
 
     p = sub.add_parser("report")
     p.add_argument("--out", default="RESULTS.md")

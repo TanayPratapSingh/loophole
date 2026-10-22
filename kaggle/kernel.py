@@ -44,11 +44,17 @@ sh(f"{sys.executable} -c \"import torch, transformers, trl, vllm; print('torch',
    f"torch.version.cuda, 'gpus', torch.cuda.device_count(), 'transformers', transformers.__version__, 'trl', "
    f"trl.__version__, 'vllm', vllm.__version__)\"", check=False)
 
-zips = sorted(glob.glob("/kaggle/input/**/src.zip", recursive=True))
-if not zips:
-    raise SystemExit("code dataset not found: no src.zip under /kaggle/input")
+# Kaggle extracts uploaded archives, so the code arrives either as src.zip or as an extracted tree.
 shutil.rmtree(f"{WORK}/src", ignore_errors=True)
-shutil.unpack_archive(zips[0], f"{WORK}/src")
+trees = sorted(glob.glob("/kaggle/input/**/pyproject.toml", recursive=True))
+zips = sorted(glob.glob("/kaggle/input/**/src.zip", recursive=True))
+if trees:
+    shutil.copytree(os.path.dirname(trees[0]), f"{WORK}/src")
+elif zips:
+    shutil.unpack_archive(zips[0], f"{WORK}/src")
+else:
+    sh("find /kaggle/input -maxdepth 4 | head -50", check=False)
+    raise SystemExit("code dataset not found: no pyproject.toml or src.zip under /kaggle/input")
 sh(f"{sys.executable} -m pip install -q --no-deps -e {WORK}/src")
 
 os.environ["LOOPHOLE_DATA"] = f"{WORK}/src/data"

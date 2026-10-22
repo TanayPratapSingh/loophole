@@ -56,9 +56,13 @@ def cmd_fetch(a) -> None:
 
 def cmd_calibrate(a) -> None:
     env = get_env("mbpp", sandbox=a.sandbox)
+    run = new_run("calibrate-mbpp", a.runs_root, {"sandbox": a.sandbox})
     rep = env.calibrate()
     bad = {k: v["details"] for k, v in rep.items() if not v["passed"]}
-    print(f"{len(rep)} references graded; {len(bad)} quarantined: {bad}")
+    patched = sum(t.meta["patched_assertion"] for t in env.tasks(calibrated=False))
+    (run / "reference.json").write_text(json.dumps({str(k): v for k, v in rep.items()}, indent=1))
+    finish(run, results={"problems": len(rep), "quarantined": sorted(bad), "patched": patched})
+    print(f"{len(rep)} references graded; {len(bad)} quarantined: {bad}; {patched} assertions patched")
 
 
 def cmd_probe(a) -> None:

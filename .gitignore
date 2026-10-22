@@ -10,3 +10,4 @@ kaggle/output/
 checkpoints/
 *.safetensors
 .DS_Store
+.kvenv/

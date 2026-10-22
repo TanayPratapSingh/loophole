@@ -18,6 +18,8 @@ from typing import Any, Protocol
 
 from loophole.core.types import Message
 
+CONTEXT_EXHAUSTED = None  # a sampler returns this in place of text when a prompt no longer fits the context
+
 
 class Sampler(Protocol):
     name: str
@@ -40,6 +42,7 @@ class VLLMSampler:
 
         self.model = model
         self.adapter = adapter
+        self.max_model_len = max_model_len
         if adapter:
             kw.update(enable_lora=True, max_lora_rank=max_lora_rank)
         self.llm = LLM(model=model, dtype=dtype, gpu_memory_utilization=gpu_memory_utilization,
@@ -54,8 +57,15 @@ class VLLMSampler:
             from vllm.lora.request import LoRARequest
 
             extra["lora_request"] = LoRARequest("adapter", 1, self.adapter)
-        outs = self.llm.chat([_clean(c) for c in conversations], sp, tools=tools, use_tqdm=False, **extra)
-        return [[o.text for o in out.outputs] for out in outs]
+        # A conversation whose prompt already fills the context window cannot get a reply; vLLM would reject the
+        # whole batch for it. Answer those with None (CONTEXT_EXHAUSTED) and send the rest.
+        tok = self.llm.get_tokenizer()
+        convs = [_clean(c) for c in conversations]
+        fits = [len(tok.apply_chat_template(c, tools=tools, add_generation_prompt=True, tokenize=True)) + max_tokens
+                <= self.max_model_len for c in convs]
+        sendable = [c for c, ok in zip(convs, fits, strict=True) if ok]
+        outs = iter(self.llm.chat(sendable, sp, tools=tools, use_tqdm=False, **extra) if sendable else [])
+        return [[o.text for o in next(outs).outputs] if ok else [CONTEXT_EXHAUSTED] * n for ok in fits]
 
 
 class HFSampler:

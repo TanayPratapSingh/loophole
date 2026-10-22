@@ -40,7 +40,7 @@ def single_turn(env: Environment, tasks: list[Task], sampler: Sampler, k: int, t
         completions += sampler.generate([t.prompt for t in tasks[i:i + chunk]], n=k, temperature=temperature,
                                         max_tokens=max_tokens, seed=seed)
     verifiers = env.verifiers()
-    jobs = [(t, j, c) for t, cs in zip(tasks, completions, strict=True) for j, c in enumerate(cs)]
+    jobs = [(t, j, c or "") for t, cs in zip(tasks, completions, strict=True) for j, c in enumerate(cs)]
     with ThreadPoolExecutor(workers) as ex:
         grades = list(ex.map(lambda job: _grade_all(verifiers, job[0], job[2]), jobs))
     return [Rollout(t.task_id, t.env, c, g, sample=j) for (t, j, c), g in zip(jobs, grades, strict=True)]
@@ -61,6 +61,9 @@ def multi_turn(env: Environment, tasks: list[Task], sampler: Sampler, k: int, te
         still = []
         for i, reply in zip(live, replies, strict=True):
             text = reply[0]
+            if text is None:  # the conversation outgrew the model's context window
+                ended[i] = "context_exhausted"
+                continue
             convs[i].append({"role": "assistant", "content": text})
             calls = parse_tool_calls(text)
             if calls is None or not calls:

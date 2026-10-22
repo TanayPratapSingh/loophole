@@ -131,7 +131,13 @@ def cmd_regrade(a) -> None:
     new = [type(r)(r.task_id, r.env, r.completion, _grade_all(verifiers, tasks[r.task_id], r.completion),
                    r.step, r.sample) for r in old]
     changed = sum(any(r.grades[k].passed != n.grades[k].passed for k in r.grades) for r, n in zip(old, new, strict=True))
+    if (run / "summary.json").exists() and not (run / "summary.before_regrade.json").exists():
+        (run / "summary.json").rename(run / "summary.before_regrade.json")
     write(run, new, "rollouts.regraded.jsonl")
+    from loophole.runlog import _git
+
+    finish(run, regrade={"commit": _git("rev-parse", "HEAD"), "changed_verdicts": changed, "rollouts": len(new),
+                         "reason": a.reason, "summary": json.loads((run / "summary.json").read_text())})
     print(f"regraded {len(new)} rollouts; {changed} changed verdict")
 
 
@@ -242,6 +248,7 @@ def main(argv: list[str] | None = None) -> None:
 
     p = sub.add_parser("regrade")
     p.add_argument("run")
+    p.add_argument("--reason", required=True, help="why the saved rollouts are being regraded")
     p.set_defaults(fn=cmd_regrade)
 
     p = sub.add_parser("detect")

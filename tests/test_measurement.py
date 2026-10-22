@@ -7,7 +7,13 @@ import pytest
 
 from loophole.core.env import get_env
 from loophole.core.types import Grade, Rollout
-from loophole.detect.detectors import grader_shortcut, invented_numbers, result_too_broad, run_rules, sprayed_answer
+from loophole.detect.detectors import (
+    grader_shortcut,
+    invented_numbers,
+    result_too_broad,
+    run_rules,
+    sprayed_answer,
+)
 from loophole.eval.metrics import bootstrap_ci, hack_curve, onset_step, pass_at_k, pass_hat_k, summarize
 from loophole.eval.runner import evaluate, read
 from loophole.eval.samplers import StubSampler

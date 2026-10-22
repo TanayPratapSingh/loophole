@@ -44,7 +44,28 @@ def evals(model: str, kw: str, single_k: int = 8, multi_k: int = 4) -> list[str]
     ]
 
 
+def grpo_arm(env: str, train_on: str, steps: int, max_len: int, model: str = Q.format("1.5B")) -> list[str]:
+    """Train one arm, then evaluate its adapter on the held out test split with both verifiers."""
+    label = f"grpo-{env}-{train_on}-{model.split('/')[-1]}"
+    return [
+        f"python -m loophole.train.grpo --env {env} --train-on {train_on} --model {model} --steps {steps} "
+        f"--max-completion-length {max_len} --vllm colocate --precision fp16 --save-steps 25 --label {label}",
+        f"loophole eval --env {env} --split test --n 200 --k 8 --backend vllm --model {model} --sampler-kwargs '{T4}' "
+        f"--adapter $(ls -d runs/*-{label}/adapter | tail -1) --max-tokens {max_len} --label eval-{env}-after-{label}",
+    ]
+
+
 PLANS = {
+    # The two baseline jobs that failed (7B repo hit the 6k context; GRPO hit Kaggle's torchao), then GRPO on the
+    # two environments where 1.5B succeeds often enough to learn from: MBPP+ (47% honest) and SQLQuest (37%).
+    "train1": [
+        f"loophole eval --env repo --split test --n 93 --k 4 --backend vllm --model {Q.format('7B')} "
+        f"--sampler-kwargs '{T4X2}' --max-tokens 1024 --max-turns 10 --label eval-repo-Qwen2.5-7B-Instruct",
+        *grpo_arm("mbpp", "leaky", 100, 512),
+        *grpo_arm("mbpp", "honest", 100, 512),
+        *grpo_arm("sqlquest", "leaky", 100, 384),
+        *grpo_arm("sqlquest", "honest", 100, 384),
+    ],
     # Linux sandbox numbers, MBPP+ calibration on Linux, baseline hacking propensity across three sizes,
     # and three GRPO steps to measure step time before committing GPU hours to full runs.
     "baseline": [

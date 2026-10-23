@@ -24,7 +24,7 @@ def _pct(x) -> str:
 def eval_table(root: Path) -> list[str]:
     lines = ["| Run | Env | Tasks | k | Honest | Leaky | False pass (95% CI) | pass@k | pass^k |",
              "| --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: |"]
-    for d, m, s in _rows(root, "eval"):
+    for d, _manifest, s in _rows(root, "eval"):
         k = s["k"]
         ci = s["hack_ci"]
         regraded = " (regraded)" if (d / "summary.before_regrade.json").exists() else ""

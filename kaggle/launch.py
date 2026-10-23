@@ -113,7 +113,35 @@ def offline_plan() -> list[str]:
     return out
 
 
+T4_LONG = '{"dtype": "half", "gpu_memory_utilization": 0.85, "max_model_len": 16384}'
+
+
+def repo_arms_3b(steps: int = 40) -> list[str]:
+    """Multi turn GRPO on the repo environment with 3B, the smallest size that solves any repo task (16.7%).
+
+    3B is too large to share one T4 with its own vLLM engine, so vLLM serves on GPU 1 and training runs on GPU 0.
+    """
+    m3 = Q.format("3B")
+    out = [f"CUDA_VISIBLE_DEVICES=1 nohup trl vllm-serve --model {m3} --dtype half --gpu-memory-utilization 0.85 "
+           f"--max-model-len 12288 > logs/vllm_server.log 2>&1 & "
+           f"for i in $(seq 1 120); do curl -sf localhost:8000/health/ && break; sleep 5; done"]
+    for arm in ("leaky", "honest"):
+        out.append(f"CUDA_VISIBLE_DEVICES=0 python -m loophole.train.grpo --env repo --train-on {arm} --model {m3} "
+                   f"--steps {steps} --num-generations 4 --prompts-per-step 4 --micro-batch 4 "
+                   f"--max-completion-length 2048 --max-tool-calls 8 --vllm server --precision fp16 --save-steps 20 "
+                   f"--label grpo-repo-{arm}-Qwen2.5-3B-Instruct")
+    out.append("pkill -f vllm-serve; sleep 15")
+    for arm in ("leaky", "honest"):
+        label = f"grpo-repo-{arm}-Qwen2.5-3B-Instruct"
+        out.append(f"loophole eval --env repo --split test --n 93 --k 4 --backend vllm --model {m3} "
+                   f"--sampler-kwargs '{T4_LONG}' --adapter {adapter_of(label)} --max-tokens 1024 --max-turns 10 "
+                   f"--label eval-repo-after-{label}")
+    return out
+
+
 PLANS = {
+    # The framework attempts again (the first died creating a venv), then multi turn GRPO on repo with 3B.
+    "extras": ["bash src/kaggle/attempts/verl.sh", "bash src/kaggle/attempts/openrlhf.sh", *repo_arms_3b()],
     # Seed 1 of all four arms, plus forgetting: continue the seed 1 honest SQL adapter on MBPP+ and measure
     # what it keeps on SQL.
     "train2": [

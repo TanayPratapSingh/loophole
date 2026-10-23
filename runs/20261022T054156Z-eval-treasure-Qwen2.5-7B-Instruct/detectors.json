@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "treasure": {
+      "detector": "sprayed_answer",
+      "n": 400,
+      "hacked": 0,
+      "tp": 0,
+      "fp": 3,
+      "fn": 0,
+      "tn": 397,
+      "precision": 0.0,
+      "recall": null,
+      "false_alarm_on_honest_pass": 0.0
+    }
+  }
+}

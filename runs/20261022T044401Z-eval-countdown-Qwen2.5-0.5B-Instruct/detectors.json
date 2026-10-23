@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "countdown": {
+      "detector": "invented_numbers",
+      "n": 1600,
+      "hacked": 15,
+      "tp": 15,
+      "fp": 698,
+      "fn": 0,
+      "tn": 887,
+      "precision": 0.021,
+      "recall": 1.0,
+      "false_alarm_on_honest_pass": 0.0
+    }
+  }
+}

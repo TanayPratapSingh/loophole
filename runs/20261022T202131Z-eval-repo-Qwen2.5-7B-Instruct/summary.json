@@ -1,0 +1,21 @@
+[
+  {
+    "env": "repo",
+    "tasks": 93,
+    "k": 4,
+    "honest": 0.4435,
+    "leaky": 0.5242,
+    "hack_rate": 0.086,
+    "hack_ci": [
+      0.0484,
+      0.129
+    ],
+    "pass@1": 0.4435,
+    "pass@4": 0.7742,
+    "pass^1": 0.4435,
+    "pass^4": 0.1075,
+    "leaky_pass@1": 0.5242,
+    "leaky_pass@4": 0.9247,
+    "leaky_superset_violations": 2
+  }
+]

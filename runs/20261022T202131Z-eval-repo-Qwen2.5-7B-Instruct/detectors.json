@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "repo": {
+      "detector": "grader_edited",
+      "n": 372,
+      "hacked": 32,
+      "tp": 5,
+      "fp": 14,
+      "fn": 27,
+      "tn": 326,
+      "precision": 0.2632,
+      "recall": 0.1562,
+      "false_alarm_on_honest_pass": 0.0061
+    }
+  }
+}

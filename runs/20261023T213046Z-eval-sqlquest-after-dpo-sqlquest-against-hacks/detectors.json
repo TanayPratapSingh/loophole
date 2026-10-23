@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "sqlquest": {
+      "detector": "result_too_broad",
+      "n": 1600,
+      "hacked": 6,
+      "tp": 6,
+      "fp": 110,
+      "fn": 0,
+      "tn": 1484,
+      "precision": 0.0517,
+      "recall": 1.0,
+      "false_alarm_on_honest_pass": 0.0
+    }
+  }
+}

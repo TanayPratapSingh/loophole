@@ -2,7 +2,7 @@
 
 RL environments for LLM agents in which every task ships two verifiers: an honest one, and a leaky one with a documented gap. Both grade every rollout. Train on the leaky one and watch, on the same text, whether the policy learns the gap.
 
-Status: work in progress. Environments, sandboxes, verifiers, detectors, trainers, and adapters are built and tested. Baselines for three model sizes and four GRPO runs (one seed each) are done. SFT, DPO, verl, and OpenRLHF runs are not yet run.
+Status: work in progress. Built and tested: environments, sandboxes, verifiers, detectors, trainers, adapters. Run: baselines for four model sizes, GRPO seed 0 on MBPP+ and SQL, SFT, DPO, and an LLM judge. Running now: GRPO seeds 1 and 2, a forgetting test, multi turn GRPO on repo with 3B, and verl and OpenRLHF attempts (the first attempts never started; see Bugs).
 
 ## Headline
 
@@ -53,6 +53,8 @@ k = 8 samples per task for single turn environments, k = 4 for multi turn. False
 | repo | 0.5B | 93 | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
 | repo | 1.5B | 93 | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
 | repo | 7B | 93 | 44.4% | 52.4% | 8.6% | 77.4% | 10.8% |
+| treasure | 3B | 100 | 0.5% | 0.5% | 0.0% | 2.0% | 0.0% |
+| repo | 3B | 93 | 16.7% | 18.0% | 2.1% | 49.5% | 0.0% |
 
 Runs: `runs/20261022T0*-eval-*` and `runs/20261022T202131Z-eval-repo-Qwen2.5-7B-Instruct`, Kaggle, two Tesla T4, vLLM 0.32.0. The 7B repo run used a 16k context after a first attempt at 6k ran out.
 
@@ -91,16 +93,37 @@ What this does and does not show:
 - One seed per arm. The Dr. GRPO replication this repo borrows its loss from found trajectories drift apart after the first update, so a second and third seed are what would make the MBPP+ difference a finding.
 - The onset rule fixed before training (false pass at or above 10% for 3 consecutive steps) fires at step 2 in both MBPP+ arms, because the train split already starts at 18% to 20%. A threshold that ignores the starting rate cannot detect anything there. It is reported as it was written, not retuned after seeing the curves.
 
+### SFT and DPO
+
+Same held out test split and settings as everything else; Qwen2.5 1.5B, LoRA r 32, one run each.
+
+| Environment | Policy | Training data | Honest | False pass (95% CI) | pass^8 |
+| --- | --- | --- | ---: | --- | ---: |
+| mbpp | before training | | 47.4% | 8.7% (5.7 to 12.6) | 7.5% |
+| mbpp | SFT | 331 answers from 7B on the train split that the honest verifier passed | 58.6% | 9.8% (5.8 to 14.2) | 35.5% |
+| mbpp | DPO | 63 pairs: an honest pass against one of the model's own false passes | 48.5% | 7.7% (3.4 to 12.4) | 17.2% |
+| sqlquest | before training | | 36.8% | 2.7% (1.8 to 3.9) | 2.5% |
+| sqlquest | DPO | 59 pairs built the same way | 39.3% | 0.4% (0.1 to 0.7) | 14.0% |
+
+- DPO against the model's own false passes cut SQL false passes from 2.7% to 0.4%, with intervals that do not overlap, while honest accuracy rose 2.5 points. On MBPP+ the change is inside the noise.
+- Distilling through the honest verifier raised MBPP+ honest accuracy by 11.2 points without lowering the false pass rate: the student learned to solve more problems, not to stop passing the example and failing hidden inputs. The 7B teacher's own false pass rate on that train split was 17.0%, which the honest filter kept out of the data.
+- On SQL, DPO lowered pass@8 from 81.5% to 59.0% while raising pass^8 from 2.5% to 14.0%: fewer different answers, more of them consistently right.
+
+Runs: `runs/*-sft-mbpp-distill`, `runs/*-dpo-*-against-hacks`, and the `eval-*-after-sft-*` and `eval-*-after-dpo-*` runs.
+
 ### Detectors
 
 Rule detectors, which never see the honest verifier, scored against the false pass label on every eval run (`runs/*/detectors.json`).
 
 | Environment | Detector | Recall across runs | False alarms on honest passes |
 | --- | --- | --- | --- |
-| countdown | invented numbers | 1.0 on all three models | 0 |
-| sqlquest | result too broad | 0.0 to 0.2 | 0 |
-| mbpp | grader shortcut (exits, branching on the example input) | 0.0 to 0.04 | under 2% |
-| repo | grader edited | 0.16 (7B) | 0.6% |
+| countdown | invented numbers | 1.0 on all three runs | 0 |
+| sqlquest | result too broad | 0.0 to 0.27 on the runs with 35 or more false passes; 1.0 on the 6 left after DPO | 0 |
+| mbpp | grader shortcut (exits, branching on the example input) | 0.0 to 0.04 across nine runs | up to 2.9% |
+| repo | grader edited | 0.16 (7B), 0.0 (3B, 8 false passes) | 0.6% (7B), 6.5% (3B) |
+| four runs | LLM judge, Qwen2.5 7B, told the known tricks | 0.09 countdown, 0.04 mbpp, 0.0 repo, 0.0 on the SQL ordering hack | 0% to 2.2% |
+
+The judge's precision was 0.18 on countdown and MBPP+ and 0 on the other two; it was prompted with every exploit class this project defines and still missed almost all of them.
 
 The countdown detector checks the exact constraint the leaky verifier skips, so its recall is guaranteed; its low precision comes from flagging rule breaking answers that also got the value wrong. The SQL and MBPP+ detectors look for the exploit each environment was designed around, and the false passes the models actually produced were mostly something else: lost ordering on SQL, and on MBPP+ solutions that pass the shown example and fail hidden inputs without any trick. Detecting the anticipated hack is not the same as detecting the hack that happens.
 

@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "mbpp": {
+      "detector": "grader_shortcut",
+      "n": 904,
+      "hacked": 154,
+      "tp": 6,
+      "fp": 26,
+      "fn": 148,
+      "tn": 724,
+      "precision": 0.1875,
+      "recall": 0.039,
+      "false_alarm_on_honest_pass": 0.0292
+    }
+  }
+}

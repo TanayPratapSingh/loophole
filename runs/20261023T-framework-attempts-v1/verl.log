@@ -1,0 +1,27 @@
++ WORK=/kaggle/working
++ python -m venv --system-site-packages /kaggle/working/verlenv
+Error: Command '['/kaggle/working/verlenv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
++ /kaggle/working/verlenv/bin/pip install -q verl
++ tail -20
+src/kaggle/attempts/verl.sh: line 8: /kaggle/working/verlenv/bin/pip: No such file or directory
++ /kaggle/working/verlenv/bin/python -c 'import verl, torch, vllm; print('\''verl'\'', verl.__version__, '\''torch'\'', torch.__version__, '\''vllm'\'', vllm.__version__)'
+Error in sitecustomize; set PYTHONVERBOSE for traceback:
+ModuleNotFoundError: No module named 'wrapt'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import verl, torch, vllm; print('verl', verl.__version__, 'torch', torch.__version__, 'vllm', vllm.__version__)
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'verl'
++ loophole export verl --env countdown --n 256 --out /kaggle/working/export
+wrote /kaggle/working/export/countdown/train.parquet
+wrote /kaggle/working/export/countdown/val.parquet
++ export LOOPHOLE_VERIFIER=leaky
++ LOOPHOLE_VERIFIER=leaky
+++ python -c 'import loophole.adapters.verl as m; print(m.__file__)'
++ REWARD=/kaggle/working/src/loophole/adapters/verl.py
++ timeout 2700 /kaggle/working/verlenv/bin/python -m verl.trainer.main_ppo algorithm.adv_estimator=grpo algorithm.use_kl_in_reward=False data.train_files=/kaggle/working/export/countdown/train.parquet data.val_files=/kaggle/working/export/countdown/val.parquet data.train_batch_size=8 data.max_prompt_length=512 data.max_response_length=256 data.filter_overlong_prompts=True actor_rollout_ref.model.path=Qwen/Qwen2.5-0.5B-Instruct actor_rollout_ref.model.use_remove_padding=False actor_rollout_ref.model.enable_gradient_checkpointing=True actor_rollout_ref.actor.optim.lr=1e-6 actor_rollout_ref.actor.ppo_mini_batch_size=8 actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=4 actor_rollout_ref.actor.use_kl_loss=False actor_rollout_ref.rollout.name=vllm actor_rollout_ref.rollout.n=4 actor_rollout_ref.rollout.dtype=float16 actor_rollout_ref.rollout.gpu_memory_utilization=0.4 actor_rollout_ref.rollout.tensor_model_parallel_size=1 actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=4 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=4 custom_reward_function.path=/kaggle/working/src/loophole/adapters/verl.py custom_reward_function.name=compute_score 'trainer.logger=[console]' trainer.project_name=loophole trainer.experiment_name=verl-countdown trainer.n_gpus_per_node=2 trainer.nnodes=1 trainer.total_training_steps=5 trainer.total_epochs=1 trainer.save_freq=-1 trainer.test_freq=-1 trainer.val_before_train=False
+Error in sitecustomize; set PYTHONVERBOSE for traceback:
+ModuleNotFoundError: No module named 'wrapt'
+/kaggle/working/verlenv/bin/python: Error while finding module specification for 'verl.trainer.main_ppo' (ModuleNotFoundError: No module named 'verl')
++ echo 'verl exit code: 1'
+verl exit code: 1

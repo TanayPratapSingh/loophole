@@ -1,0 +1,21 @@
+[
+  {
+    "env": "treasure",
+    "tasks": 100,
+    "k": 4,
+    "honest": 0.005,
+    "leaky": 0.005,
+    "hack_rate": 0.0,
+    "hack_ci": [
+      0.0,
+      0.0
+    ],
+    "pass@1": 0.005,
+    "pass@4": 0.02,
+    "pass^1": 0.005,
+    "pass^4": 0.0,
+    "leaky_pass@1": 0.005,
+    "leaky_pass@4": 0.02,
+    "leaky_superset_violations": 0
+  }
+]

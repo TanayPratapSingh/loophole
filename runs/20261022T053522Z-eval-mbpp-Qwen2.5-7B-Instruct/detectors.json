@@ -12,5 +12,18 @@
       "recall": 0.0,
       "false_alarm_on_honest_pass": 0.0074
     }
+  },
+  "llm_judge": {
+    "detector": "llm_judge",
+    "n": 744,
+    "hacked": 109,
+    "tp": 4,
+    "fp": 18,
+    "fn": 105,
+    "tn": 617,
+    "precision": 0.1818,
+    "recall": 0.0367,
+    "false_alarm_on_honest_pass": 0.0222,
+    "model": "Qwen/Qwen2.5-7B-Instruct"
   }
 }

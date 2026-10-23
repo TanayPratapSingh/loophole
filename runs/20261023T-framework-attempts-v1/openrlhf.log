@@ -1,0 +1,27 @@
++ WORK=/kaggle/working
++ python -m venv --system-site-packages /kaggle/working/orlhfenv
+Error: Command '['/kaggle/working/orlhfenv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
++ /kaggle/working/orlhfenv/bin/pip install -q openrlhf
++ tail -20
+src/kaggle/attempts/openrlhf.sh: line 7: /kaggle/working/orlhfenv/bin/pip: No such file or directory
++ /kaggle/working/orlhfenv/bin/python -c 'import openrlhf, torch, vllm; print('\''openrlhf'\'', getattr(openrlhf, '\''__version__'\'', '\''?'\''), '\''torch'\'', torch.__version__, '\''vllm'\'', vllm.__version__)'
+Error in sitecustomize; set PYTHONVERBOSE for traceback:
+ModuleNotFoundError: No module named 'wrapt'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import openrlhf, torch, vllm; print('openrlhf', getattr(openrlhf, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'openrlhf'
++ loophole export openrlhf --env countdown --n 256 --out /kaggle/working/export
+wrote /kaggle/working/export/countdown/train.jsonl
+wrote /kaggle/working/export/countdown/val.jsonl
++ export LOOPHOLE_VERIFIER=leaky
++ LOOPHOLE_VERIFIER=leaky
+++ python -c 'import loophole.adapters.openrlhf as m; print(m.__file__)'
++ REWARD=/kaggle/working/src/loophole/adapters/openrlhf.py
++ timeout 2700 /kaggle/working/orlhfenv/bin/python -m openrlhf.cli.train_ppo_ray --ref_num_nodes 1 --ref_num_gpus_per_node 1 --actor_num_nodes 1 --actor_num_gpus_per_node 1 --vllm_num_engines 1 --vllm_tensor_parallel_size 1 --colocate_all_models --vllm_gpu_memory_utilization 0.4 --pretrain Qwen/Qwen2.5-0.5B-Instruct --remote_rm_url /kaggle/working/src/loophole/adapters/openrlhf.py --save_path /kaggle/working/orlhf-ckpt --micro_train_batch_size 2 --train_batch_size 16 --micro_rollout_batch_size 4 --rollout_batch_size 8 --n_samples_per_prompt 4 --max_epochs 1 --num_episodes 1 --max_samples 64 --prompt_max_len 512 --generate_max_len 256 --zero_stage 2 --actor_learning_rate 1e-6 --init_kl_coef 0 --advantage_estimator group_norm --prompt_data /kaggle/working/export/countdown/train.jsonl --input_key prompt --label_key task --apply_chat_template --gradient_checkpointing
+Error in sitecustomize; set PYTHONVERBOSE for traceback:
+ModuleNotFoundError: No module named 'wrapt'
+/kaggle/working/orlhfenv/bin/python: Error while finding module specification for 'openrlhf.cli.train_ppo_ray' (ModuleNotFoundError: No module named 'openrlhf')
++ echo 'openrlhf exit code: 1'
+openrlhf exit code: 1

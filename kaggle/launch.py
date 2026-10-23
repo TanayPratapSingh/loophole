@@ -1,7 +1,7 @@
 """Package the code as a private Kaggle dataset and push a script kernel that runs loophole commands.
 
-    python kaggle/launch.py push --plan baseline      # see PLANS below
-    python kaggle/launch.py status | logs | output
+    python kaggle/launch.py push --plan baseline [--slot b]   # see PLANS below
+    python kaggle/launch.py status | logs | output [--slot b]
 
 The kaggle CLI reads the user's own ~/.kaggle credentials; this script never
 reads or prints them. Kernels are private. Everything a kernel produces lands
@@ -44,18 +44,86 @@ def evals(model: str, kw: str, single_k: int = 8, multi_k: int = 4) -> list[str]
     ]
 
 
-def grpo_arm(env: str, train_on: str, steps: int, max_len: int, model: str = Q.format("1.5B")) -> list[str]:
+MAXLEN = {"mbpp": 512, "sqlquest": 384}
+
+
+def adapter_of(label: str) -> str:
+    return f"$(ls -d runs/*-{label}/adapter | tail -1)"
+
+
+def eval_adapter(env: str, label: str, tag: str, model: str = Q.format("1.5B")) -> str:
+    return (f"loophole eval --env {env} --split test --n 200 --k 8 --backend vllm --model {model} "
+            f"--sampler-kwargs '{T4}' --adapter {adapter_of(label)} --max-tokens {MAXLEN[env]} --label eval-{env}-after-{tag}")
+
+
+def grpo_arm(env: str, train_on: str, steps: int, max_len: int, model: str = Q.format("1.5B"), seed: int = 0,
+             init: str | None = None, tag: str | None = None) -> list[str]:
     """Train one arm, then evaluate its adapter on the held out test split with both verifiers."""
-    label = f"grpo-{env}-{train_on}-{model.split('/')[-1]}"
+    label = tag or f"grpo-{env}-{train_on}-{model.split('/')[-1]}" + (f"-s{seed}" if seed else "")
+    init_arg = f"--init-adapter {adapter_of(init)} " if init else ""
     return [
         f"python -m loophole.train.grpo --env {env} --train-on {train_on} --model {model} --steps {steps} "
-        f"--max-completion-length {max_len} --vllm colocate --precision fp16 --save-steps 25 --label {label}",
-        f"loophole eval --env {env} --split test --n 200 --k 8 --backend vllm --model {model} --sampler-kwargs '{T4}' "
-        f"--adapter $(ls -d runs/*-{label}/adapter | tail -1) --max-tokens {max_len} --label eval-{env}-after-{label}",
+        f"--max-completion-length {max_len} --vllm colocate --precision fp16 --save-steps 25 --seed {seed} "
+        f"{init_arg}--label {label}",
+        eval_adapter(env, label, label, model),
     ]
 
 
+def seeds(seed: int) -> list[str]:
+    return [*grpo_arm("sqlquest", "honest", 100, 384, seed=seed), *grpo_arm("sqlquest", "leaky", 100, 384, seed=seed),
+            *grpo_arm("mbpp", "leaky", 100, 512, seed=seed), *grpo_arm("mbpp", "honest", 100, 512, seed=seed)]
+
+
+# Existing eval runs shipped to Kaggle so the LLM judge can score their rollouts.
+JUDGE_RUNS = ["eval-countdown-Qwen2.5-7B-Instruct", "eval-mbpp-Qwen2.5-7B-Instruct",
+              "eval-repo-Qwen2.5-7B-Instruct", "eval-sqlquest-after-grpo-sqlquest-leaky-Qwen2.5-1.5B-Instruct"]
+TEACHER = "eval-mbpp-train-teacher-Qwen2.5-7B-Instruct"
+
+
+def offline_plan() -> list[str]:
+    m15, m7, m3 = Q.format("1.5B"), Q.format("7B"), Q.format("3B")
+    out = [
+        # Rejection sampling distillation: 7B answers on the train split, kept only if the honest verifier passed.
+        f"loophole eval --env mbpp --split train --n 400 --k 4 --backend vllm --model {m7} --sampler-kwargs '{T4X2}' "
+        f"--max-tokens 768 --label {TEACHER}",
+        f"python -m loophole.train.offline sft --rollouts $(ls -d runs/*-{TEACHER} | tail -1)/rollouts.jsonl "
+        f"--tasks $(ls -d runs/*-{TEACHER} | tail -1)/tasks.jsonl --model {m15} --precision fp16 --label sft-mbpp-distill",
+        eval_adapter("mbpp", "sft-mbpp-distill", "sft-mbpp-distill"),
+    ]
+    for env in ("mbpp", "sqlquest"):  # DPO with the policy's own hacks as the rejected answers
+        src = f"eval-{env}-train-Qwen2.5-1.5B-Instruct"
+        out += [
+            f"loophole eval --env {env} --split train --n 400 --k 8 --backend vllm --model {m15} --sampler-kwargs '{T4}' "
+            f"--max-tokens {MAXLEN[env]} --label {src}",
+            f"python -m loophole.train.offline dpo --rollouts $(ls -d runs/*-{src} | tail -1)/rollouts.jsonl "
+            f"--tasks $(ls -d runs/*-{src} | tail -1)/tasks.jsonl --model {m15} --precision fp16 --rejected hacked "
+            f"--label dpo-{env}-against-hacks",
+            eval_adapter(env, f"dpo-{env}-against-hacks", f"dpo-{env}-against-hacks"),
+        ]
+    out += [f"loophole detect src/runs/$(ls src/runs | grep -- '-{r}$' | tail -1) --judge-backend vllm "
+            f"--judge-model {m7} --judge-kwargs '{T4X2}'" for r in JUDGE_RUNS]
+    out += [
+        f"loophole eval --env treasure --split test --n 100 --k 4 --backend vllm --model {m3} --sampler-kwargs '{T4}' "
+        f"--max-tokens 384 --max-turns 12 --label eval-treasure-Qwen2.5-3B-Instruct",
+        f"loophole eval --env repo --split test --n 93 --k 4 --backend vllm --model {m3} --sampler-kwargs '{T4}' "
+        f"--max-tokens 1024 --max-turns 10 --label eval-repo-Qwen2.5-3B-Instruct",
+        "bash src/kaggle/attempts/verl.sh",
+        "bash src/kaggle/attempts/openrlhf.sh",
+    ]
+    return out
+
+
 PLANS = {
+    # Seed 1 of all four arms, plus forgetting: continue the seed 1 honest SQL adapter on MBPP+ and measure
+    # what it keeps on SQL.
+    "train2": [
+        *seeds(1),
+        *grpo_arm("mbpp", "honest", 100, 512, seed=1, init="grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s1",
+                  tag="grpo-mbpp-honest-after-sqlquest-s1"),
+        eval_adapter("sqlquest", "grpo-mbpp-honest-after-sqlquest-s1", "grpo-mbpp-honest-after-sqlquest-s1"),
+    ],
+    "train3": seeds(2),
+    "offline": offline_plan(),
     # The two baseline jobs that failed (7B repo hit the 6k context; GRPO hit Kaggle's torchao), then GRPO on the
     # two environments where 1.5B succeeds often enough to learn from: MBPP+ (47% honest) and SQLQuest (37%).
     "train1": [
@@ -107,6 +175,13 @@ def push_code(user: str) -> None:
             shutil.copy(ROOT / f, src / f)
     (src / "data" / "raw").mkdir(parents=True)
     shutil.copy(ROOT / "data" / "raw" / "mbppplus.jsonl", src / "data" / "raw" / "mbppplus.jsonl")
+    shutil.copytree(ROOT / "kaggle" / "attempts", src / "kaggle" / "attempts")
+    for name in JUDGE_RUNS:
+        run_dir = sorted((ROOT / "runs").glob(f"*-{name}"))[-1]
+        dest = src / "runs" / run_dir.name
+        dest.mkdir(parents=True)
+        for f in ("tasks.jsonl", "rollouts.jsonl", "manifest.json", "summary.json"):
+            shutil.copy(run_dir / f, dest / f)
     shutil.make_archive(str(d / "src"), "zip", src)
     shutil.rmtree(src)
     (d / "dataset-metadata.json").write_text(json.dumps({
@@ -130,7 +205,12 @@ def wait_ready(user: str, tries: int = 40) -> None:
     sys.exit("code dataset never became ready; not pushing the kernel")
 
 
-def push_kernel(user: str, commands: list[str], hours: float, accelerator: str) -> None:
+def kernel_slug(slot: str) -> str:
+    """One kernel per slot, so independent plans can run at the same time."""
+    return KERNEL_SLUG if slot == "a" else f"{KERNEL_SLUG}-{slot}"
+
+
+def push_kernel(user: str, commands: list[str], hours: float, accelerator: str, slot: str = "a") -> None:
     d = BUILD / "kernel"
     shutil.rmtree(d, ignore_errors=True)
     d.mkdir(parents=True)
@@ -139,7 +219,7 @@ def push_kernel(user: str, commands: list[str], hours: float, accelerator: str) 
         "CONFIG = {}", f"CONFIG = json.loads({json.dumps(json.dumps(config))})", 1)
     (d / "kernel.py").write_text(src)
     (d / "kernel-metadata.json").write_text(json.dumps({
-        "id": f"{user}/{KERNEL_SLUG}", "title": KERNEL_SLUG, "code_file": "kernel.py", "language": "python",
+        "id": f"{user}/{kernel_slug(slot)}", "title": kernel_slug(slot), "code_file": "kernel.py", "language": "python",
         "kernel_type": "script", "is_private": "true", "enable_gpu": "true", "enable_internet": "true",
         "machine_shape": accelerator, "dataset_sources": [f"{user}/{DATASET_SLUG}"], "kernel_sources": [],
         "competition_sources": [], "model_sources": []}, indent=2))
@@ -153,15 +233,16 @@ def main() -> None:
     ap.add_argument("--hours", type=float, default=11.5)
     ap.add_argument("--accelerator", default="NvidiaTeslaT4")
     ap.add_argument("--skip-code", action="store_true", help="reuse the code dataset already on Kaggle")
+    ap.add_argument("--slot", default="a", help="which kernel to use; plans in different slots run in parallel")
     a = ap.parse_args()
     user = username()
-    ref = f"{user}/{KERNEL_SLUG}"
+    ref = f"{user}/{kernel_slug(a.slot)}"
     if a.mode == "status":
         return run(["kernels", "status", ref])
     if a.mode == "logs":
         return run(["kernels", "logs", ref])
     if a.mode == "output":
-        out = ROOT / "kaggle" / "output"
+        out = ROOT / "kaggle" / ("output" if a.slot == "a" else f"output-{a.slot}")
         out.mkdir(parents=True, exist_ok=True)
         return run(["kernels", "output", ref, "-p", str(out), "-o"])
     if not a.plan:
@@ -169,7 +250,7 @@ def main() -> None:
     if not a.skip_code:
         push_code(user)
         wait_ready(user)
-    push_kernel(user, PLANS[a.plan], a.hours, a.accelerator)
+    push_kernel(user, PLANS[a.plan], a.hours, a.accelerator, a.slot)
 
 
 if __name__ == "__main__":

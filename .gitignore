@@ -11,3 +11,4 @@ checkpoints/
 *.safetensors
 .DS_Store
 .kvenv/
+kaggle/output*/

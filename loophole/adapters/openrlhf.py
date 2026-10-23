@@ -77,8 +77,18 @@ def grade_batch(queries: list[str], prompts: list[str], labels: list[str], train
 
 
 def reward_func(queries, prompts, labels):
-    """In process form for OpenRLHF's --remote_rm_url <this file>; returns plain lists (OpenRLHF tensorises)."""
-    return grade_batch(list(queries), list(prompts), list(labels), os.environ.get("LOOPHOLE_VERIFIER", "leaky"))
+    """In process form for OpenRLHF's --remote_rm_url <this file>.
+
+    OpenRLHF's in process reward functions return tensors, so rewards and
+    scores are converted when torch is importable; the HTTP server keeps lists.
+    """
+    out = grade_batch(list(queries), list(prompts), list(labels), os.environ.get("LOOPHOLE_VERIFIER", "leaky"))
+    try:
+        import torch
+    except ImportError:
+        return out
+    return {**out, "rewards": torch.tensor(out["rewards"]), "scores": torch.tensor(out["scores"]),
+            "extra_logs": {k: torch.tensor(v) for k, v in out["extra_logs"].items()}}
 
 
 def serve(env: Environment, verifier: str, host: str = "127.0.0.1", port: int = 8099) -> None:

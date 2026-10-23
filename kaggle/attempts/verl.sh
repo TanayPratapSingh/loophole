@@ -4,8 +4,10 @@
 # Whatever happens is the result: the log is kept and reported, success or failure.
 set -x
 WORK=/kaggle/working
-python -m venv --system-site-packages $WORK/verlenv
-$WORK/verlenv/bin/pip install -q verl 2>&1 | tail -20
+# Kaggle's Python 3.13 has no ensurepip, so `python -m venv` fails (the first attempt died there); uv does not need it.
+python -m pip install -q uv
+uv venv --system-site-packages $WORK/verlenv
+uv pip install --python $WORK/verlenv/bin/python -q verl 2>&1 | tail -20
 $WORK/verlenv/bin/python -c "import verl, torch, vllm; print('verl', verl.__version__, 'torch', torch.__version__, 'vllm', vllm.__version__)"
 loophole export verl --env countdown --n 256 --out $WORK/export
 export LOOPHOLE_VERIFIER=leaky

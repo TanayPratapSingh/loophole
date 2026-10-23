@@ -3,8 +3,10 @@
 # in process by loophole.adapters.openrlhf.reward_func. Own venv; the log is the result either way.
 set -x
 WORK=/kaggle/working
-python -m venv --system-site-packages $WORK/orlhfenv
-$WORK/orlhfenv/bin/pip install -q openrlhf 2>&1 | tail -20
+# Kaggle's Python 3.13 has no ensurepip, so `python -m venv` fails (the first attempt died there); uv does not need it.
+python -m pip install -q uv
+uv venv --system-site-packages $WORK/orlhfenv
+uv pip install --python $WORK/orlhfenv/bin/python -q openrlhf 2>&1 | tail -20
 $WORK/orlhfenv/bin/python -c "import openrlhf, torch, vllm; print('openrlhf', getattr(openrlhf, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)"
 loophole export openrlhf --env countdown --n 256 --out $WORK/export
 export LOOPHOLE_VERIFIER=leaky

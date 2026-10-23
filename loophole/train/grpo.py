@@ -63,6 +63,7 @@ def main(argv: list[str] | None = None) -> Path:
     ap.add_argument("--vllm-gpu-mem", type=float, default=0.35)
     ap.add_argument("--max-tool-calls", type=int, default=10)
     ap.add_argument("--save-steps", type=int, default=50)
+    ap.add_argument("--init-adapter", default=None, help="LoRA adapter to continue training instead of a fresh one")
     ap.add_argument("--label", default=None)
     ap.add_argument("--runs-root", default="runs")
     a = ap.parse_args(argv)
@@ -98,13 +99,21 @@ def main(argv: list[str] | None = None) -> Path:
     peft = LoraConfig(r=a.lora_r, lora_alpha=2 * a.lora_r, lora_dropout=0.0, target_modules="all-linear",
                       task_type="CAUSAL_LM")
 
+    model, peft_arg = a.model, peft
+    if a.init_adapter:  # continue training an existing LoRA, for the forgetting experiment
+        from peft import PeftModel
+        from transformers import AutoModelForCausalLM
+
+        base = AutoModelForCausalLM.from_pretrained(a.model, dtype=cfg.model_init_kwargs["dtype"])
+        model, peft_arg = PeftModel.from_pretrained(base, a.init_adapter, is_trainable=True), None
+
     factory = None
     if env.multi_turn:
         from loophole.train.trl_envs import RepoTRLEnv, TreasureTRLEnv
 
         factory = TreasureTRLEnv if a.env == "treasure" else functools.partial(RepoTRLEnv, env)
-    trainer = GRPOTrainer(model=a.model, reward_funcs=[reward], args=cfg,
-                          train_dataset=Dataset.from_list(to_rows(tasks)), peft_config=peft,
+    trainer = GRPOTrainer(model=model, reward_funcs=[reward], args=cfg,
+                          train_dataset=Dataset.from_list(to_rows(tasks)), peft_config=peft_arg,
                           environment_factory=factory)
     trainer.train()
     trainer.save_model(str(run / "adapter"))

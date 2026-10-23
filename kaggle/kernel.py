@@ -88,6 +88,8 @@ for i, cmd in enumerate(CONFIG.get("commands", [])):
 with open(f"{WORK}/commands.json", "w") as f:
     json.dump(done, f, indent=1)
 shutil.rmtree(f"{WORK}/cache", ignore_errors=True)  # regenerated SQL worlds; not worth downloading
+for big in ("verlenv", "orlhfenv", "orlhf-ckpt", "export"):  # attempt venvs and exports, gigabytes, not results
+    shutil.rmtree(f"{WORK}/{big}", ignore_errors=True)
 for ck in glob.glob(f"{WORK}/runs/*/checkpoints"):
     shutil.rmtree(ck, ignore_errors=True)  # intermediate checkpoints; the final adapter is kept
 print(f"total {round((time.time() - T0) / 3600, 2)} h", flush=True)

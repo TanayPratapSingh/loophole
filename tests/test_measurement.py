@@ -140,3 +140,28 @@ def test_verl_and_openrlhf_adapters(tmp_path):
     out = openrlhf.grade_batch([prompt + f"<answer>{t['meta']['reference']}</answer><|im_end|>"], [prompt],
                                [rows[0]["task"]], "honest")
     assert out["rewards"] == [1.0] and out["extra_logs"]["loophole_hack_rate"] == 0.0
+
+
+def test_report_renders_every_run_kind(tmp_path):
+    from loophole.report import render
+
+    runs = tmp_path / "runs"
+    ev = runs / "20260101T000000Z-eval-countdown-stub"
+    ev.mkdir(parents=True)
+    (ev / "manifest.json").write_text(json.dumps({"config": {}}))
+    (ev / "summary.json").write_text(json.dumps([{"env": "countdown", "tasks": 2, "k": 1, "honest": 0.5, "leaky": 1.0,
+                                                   "hack_rate": 0.5, "hack_ci": [0.0, 1.0], "pass@1": 0.5,
+                                                   "pass^1": 0.5}]))
+    tr = runs / "20260101T000001Z-grpo-countdown-leaky-stub"
+    tr.mkdir()
+    (tr / "manifest.json").write_text(json.dumps({"config": {"env": "countdown", "train_on": "leaky", "seed": 0}}))
+    (tr / "rollouts.jsonl").write_text("".join(json.dumps(_r("a", h, True, step=s).to_dict()) + "\n"
+                                               for s in range(12) for h in (s >= 6, False)))
+    pr = runs / "20260101T000002Z-probe"
+    pr.mkdir()
+    (pr / "manifest.json").write_text(json.dumps({"platform": "test"}))
+    (pr / "probes.json").write_text(json.dumps([{"backend": "rlimit", "probe": "network_egress", "contained": False}]))
+    text = render(runs, tmp_path / "RESULTS.md").read_text()
+    assert "eval-countdown-stub" in text and "50.0% (0.0% to 100.0%)" in text
+    assert "grpo-countdown-leaky-stub" in text and "| leaky | 0 | 12 |" in text
+    assert "0 of 1 | network_egress" in text

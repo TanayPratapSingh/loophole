@@ -137,8 +137,11 @@ def cmd_regrade(a) -> None:
     write(run, new, "rollouts.regraded.jsonl")
     from loophole.runlog import _git
 
-    finish(run, regrade={"commit": _git("rev-parse", "HEAD"), "changed_verdicts": changed, "rollouts": len(new),
-                         "reason": a.reason, "summary": json.loads((run / "summary.json").read_text())})
+    record = {"commit": _git("rev-parse", "HEAD"), "changed_verdicts": changed, "rollouts": len(new),
+              "reason": a.reason, "summary": json.loads((run / "summary.json").read_text())}
+    history = json.loads((run / "manifest.json").read_text()).get("regrades", [])
+    old = json.loads((run / "manifest.json").read_text()).get("regrade")
+    finish(run, regrades=[*([old] if old and not history else []), *history, record])
     print(f"regraded {len(new)} rollouts; {changed} changed verdict")
 
 

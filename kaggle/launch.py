@@ -233,7 +233,7 @@ def build_src() -> tuple[Path, str]:
         for f in ("tasks.jsonl", "rollouts.jsonl", "manifest.json", "summary.json"):
             shutil.copy(run_dir / f, dest / f)
     for name in SHIP_ADAPTERS:
-        run_dir = sorted((ROOT / "runs").glob(f"*-{name}"))[-1]
+        run_dir = sorted((ROOT / "runs").glob(f"*Z-{name}"))[-1]  # the training run, not an eval-after run
         shutil.copytree(run_dir / "adapter", src / "adapters" / name)
     code = tree_hash(src)
     (d / "CODE_HASH").write_text(code + "\n")

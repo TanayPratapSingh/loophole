@@ -10,6 +10,8 @@
     loophole detect runs/<run> [--judge-backend vllm --judge-model ...]
     loophole export verl|openrlhf --env countdown --out data/export
     loophole serve-reward --env countdown --verifier leaky --port 8099
+    loophole compare --a <runs> --b <runs> --label x  arm a minus arm b false pass rate, pooled over seeds
+    loophole sql-shape <runs>                      count the order losing SQL query in eval or training runs
     loophole scan runs/<run>                       count escape style code in a run's rollouts
     loophole bench-pool --sandbox rlimit           grade MBPP+ with a thread pool and a Ray actor pool
     loophole report                                render RESULTS.md from runs/
@@ -229,6 +231,25 @@ def cmd_scan(a) -> None:
     print(json.dumps({"run": run.name, "rollouts": n, "matches": counts}))
 
 
+def cmd_compare(a) -> None:
+    from loophole.analysis import compare
+
+    out = compare([Path(x) for x in a.a], [Path(x) for x in a.b])
+    run = new_run(f"compare-{a.label}", a.runs_root, {"a": a.a, "b": a.b})
+    (run / "compare.json").write_text(json.dumps(out, indent=2))
+    finish(run, results=out)
+    print(json.dumps(out, indent=2))
+
+
+def cmd_sql_shape(a) -> None:
+    from loophole.analysis import sql_order_shape
+
+    for r in a.runs:
+        out = sql_order_shape(Path(r))
+        (Path(r) / "sql_shape.json").write_text(json.dumps(out, indent=2))
+        print(Path(r).name, json.dumps(out))
+
+
 def cmd_report(a) -> None:
     from loophole.report import render
 
@@ -309,6 +330,16 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8099)
     p.set_defaults(fn=cmd_serve_reward)
+
+    p = sub.add_parser("compare")
+    p.add_argument("--a", nargs="+", required=True, help="eval runs of arm a, one per seed")
+    p.add_argument("--b", nargs="+", required=True, help="eval runs of arm b, one per seed")
+    p.add_argument("--label", required=True)
+    p.set_defaults(fn=cmd_compare)
+
+    p = sub.add_parser("sql-shape")
+    p.add_argument("runs", nargs="+")
+    p.set_defaults(fn=cmd_sql_shape)
 
     p = sub.add_parser("scan")
     p.add_argument("run")

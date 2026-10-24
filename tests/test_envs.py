@@ -78,6 +78,17 @@ def test_sql_over_broad_query_only_fools_leaky():
     assert grades(env, t, "```sql\nSELECT name FROM customers\n```") == {"honest": False, "leaky": True}
 
 
+def test_sql_leaky_accepts_whatever_honest_accepts_on_rounding(monkeypatch):
+    """Regression: an unrounded AVG of 6.125 passed honest (within 0.01 of 6.13) and failed an exact leaky check."""
+    from loophole.core.types import Task
+    from loophole.envs import sqlquest
+
+    monkeypatch.setattr(sqlquest, "run_select", lambda world, sql, **kw: [(6.125,)])
+    t = Task("sqlquest", "t", "test", [], {"world": 0, "expected": [6.13], "shape": "scalar"})
+    g = {k: v.grade(t, "```sql\nSELECT 1\n```").passed for k, v in get_env("sqlquest").verifiers().items()}
+    assert g == {"honest": True, "leaky": True}
+
+
 def test_sql_grading_is_correct_under_concurrency():
     """Regression: per query connections plus a locked configuration failed two thirds of grades on 8 threads."""
     from concurrent.futures import ThreadPoolExecutor

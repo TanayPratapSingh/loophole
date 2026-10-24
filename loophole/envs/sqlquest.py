@@ -241,8 +241,11 @@ class _SQLVerifier:
         if self.strict:
             ok = _strict_match(rows, expected, shape)
         else:
+            # Same equality as the honest check (floats within 0.01): the leaky verifier must accept everything
+            # the honest one does. Exact matching here once rejected AVG results that Python and DuckDB round
+            # differently (6.125 to 6.12 against 6.13), 8 rollouts in each seed 1 SQL eval.
             cells = _cells(rows)
-            ok = all(e in cells for e in expected)
+            ok = all(any(_eq(e, c) for c in cells) for e in expected)
         return Grade(float(ok), ok, self.name, {"rows": len(rows), "cols": len(rows[0]) if rows else 0})
 
 

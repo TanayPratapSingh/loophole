@@ -11,6 +11,7 @@ in /kaggle/working/runs and comes back with `output`.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -193,7 +194,16 @@ def username() -> str:
     sys.exit("could not determine the Kaggle username; is the CLI configured?")
 
 
-def push_code(user: str) -> None:
+def tree_hash(root: Path) -> str:
+    """sha256 over every file's relative path and bytes, so any change to the shipped code changes it."""
+    h = hashlib.sha256()
+    for f in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
+        h.update(str(f.relative_to(root)).encode())
+        h.update(f.read_bytes())
+    return h.hexdigest()[:16]
+
+
+def build_src() -> tuple[Path, str]:
     d = BUILD / "dataset"
     shutil.rmtree(d, ignore_errors=True)
     src = d / "src"
@@ -210,6 +220,14 @@ def push_code(user: str) -> None:
         dest.mkdir(parents=True)
         for f in ("tasks.jsonl", "rollouts.jsonl", "manifest.json", "summary.json"):
             shutil.copy(run_dir / f, dest / f)
+    code = tree_hash(src)
+    (d / "CODE_HASH").write_text(code + "\n")
+    return d, code
+
+
+def push_code(user: str) -> str:
+    d, code = build_src()
+    src = d / "src"
     shutil.make_archive(str(d / "src"), "zip", src)
     shutil.rmtree(src)
     (d / "dataset-metadata.json").write_text(json.dumps({
@@ -219,18 +237,22 @@ def push_code(user: str) -> None:
         run(["datasets", "version", "-p", str(d), "-m", "update code", "-q"])
     else:
         run(["datasets", "create", "-p", str(d), "-q"])
+    return code
 
 
-def wait_ready(user: str, tries: int = 40) -> None:
-    """A kernel pushed before its dataset finishes processing starts without it, so wait."""
+def wait_ready(user: str, code: str, tries: int = 60) -> None:
+    """Wait until Kaggle serves this exact code, checked by downloading CODE_HASH back, not by trusting "ready"."""
+    import tempfile
     import time
 
     for _ in range(tries):
-        r = run(["datasets", "status", f"{user}/{DATASET_SLUG}"], capture=True)
-        if "ready" in r.stdout:
+        with tempfile.TemporaryDirectory() as t:
+            run(["datasets", "download", f"{user}/{DATASET_SLUG}", "-f", "CODE_HASH", "-p", t, "--force"], capture=True)
+            got = next((f.read_text().strip() for f in Path(t).rglob("CODE_HASH")), None)
+        if got == code:
             return
         time.sleep(15)
-    sys.exit("code dataset never became ready; not pushing the kernel")
+    sys.exit(f"Kaggle never served code {code}; not pushing the kernel")
 
 
 def kernel_slug(slot: str) -> str:
@@ -238,11 +260,11 @@ def kernel_slug(slot: str) -> str:
     return KERNEL_SLUG if slot == "a" else f"{KERNEL_SLUG}-{slot}"
 
 
-def push_kernel(user: str, commands: list[str], hours: float, accelerator: str, slot: str = "a") -> None:
+def push_kernel(user: str, commands: list[str], hours: float, accelerator: str, slot: str, code: str) -> None:
     d = BUILD / "kernel"
     shutil.rmtree(d, ignore_errors=True)
     d.mkdir(parents=True)
-    config = {"commands": commands, "session_hours": hours}
+    config = {"commands": commands, "session_hours": hours, "code_hash": code}
     src = (ROOT / "kaggle" / "kernel.py").read_text().replace(
         "CONFIG = {}", f"CONFIG = json.loads({json.dumps(json.dumps(config))})", 1)
     (d / "kernel.py").write_text(src)
@@ -275,10 +297,12 @@ def main() -> None:
         return run(["kernels", "output", ref, "-p", str(out), "-o"])
     if not a.plan:
         sys.exit("push needs --plan")
-    if not a.skip_code:
-        push_code(user)
-        wait_ready(user)
-    push_kernel(user, PLANS[a.plan], a.hours, a.accelerator, a.slot)
+    if a.skip_code:
+        _, code = build_src()  # the hash of the local tree; the kernel refuses to run if Kaggle holds other code
+    else:
+        code = push_code(user)
+        wait_ready(user, code)
+    push_kernel(user, PLANS[a.plan], a.hours, a.accelerator, a.slot, code)
 
 
 if __name__ == "__main__":

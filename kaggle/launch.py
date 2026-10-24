@@ -146,7 +146,10 @@ PLANS = {
     # Forgetting: continue the seed 1 honest SQL adapter (shipped with the code) on MBPP+ with the honest
     # verifier, then measure it on both. The comparison is the seed 1 honest SQL adapter's own SQL eval.
     "forget": [
-        "python -m loophole.train.grpo --env mbpp --train-on honest --model Qwen/Qwen2.5-1.5B-Instruct --steps 100 "
+        # A model built outside TRL (base plus saved adapter) is refused when two GPUs are visible, since the
+        # Trainer would wrap it in nn.DataParallel; the first attempt died on exactly that. One GPU is enough.
+        "CUDA_VISIBLE_DEVICES=0 python -m loophole.train.grpo --env mbpp --train-on honest "
+        "--model Qwen/Qwen2.5-1.5B-Instruct --steps 100 "
         "--max-completion-length 512 --vllm colocate --precision fp16 --save-steps 25 --seed 1 "
         "--init-adapter src/adapters/grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s1 "
         "--label grpo-mbpp-honest-after-sqlquest-s1",

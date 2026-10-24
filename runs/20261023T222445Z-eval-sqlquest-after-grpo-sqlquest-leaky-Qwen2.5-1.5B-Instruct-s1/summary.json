@@ -4,7 +4,7 @@
     "tasks": 200,
     "k": 8,
     "honest": 0.9387,
-    "leaky": 0.9838,
+    "leaky": 0.9888,
     "hack_rate": 0.05,
     "hack_ci": [
       0.02,
@@ -16,9 +16,9 @@
     "pass^1": 0.9387,
     "pass^4": 0.9061,
     "pass^8": 0.865,
-    "leaky_pass@1": 0.9838,
-    "leaky_pass@4": 0.995,
-    "leaky_pass@8": 0.995,
-    "leaky_superset_violations": 8
+    "leaky_pass@1": 0.9888,
+    "leaky_pass@4": 1.0,
+    "leaky_pass@8": 1.0,
+    "leaky_superset_violations": 0
   }
 ]

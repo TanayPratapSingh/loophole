@@ -37,6 +37,27 @@ def sh(cmd, check=True, timeout=None, log=None):
 
 print("CONFIG", json.dumps(CONFIG), flush=True)
 sh("nvidia-smi --query-gpu=name,memory.total,compute_cap --format=csv", check=False)
+
+# Kaggle extracts uploaded archives, so the code arrives either as src.zip or as an extracted tree.
+shutil.rmtree(f"{WORK}/src", ignore_errors=True)
+trees = sorted(glob.glob("/kaggle/input/**/pyproject.toml", recursive=True))
+zips = sorted(glob.glob("/kaggle/input/**/src.zip", recursive=True))
+if trees:
+    shutil.copytree(os.path.dirname(trees[0]), f"{WORK}/src")
+elif zips:
+    shutil.unpack_archive(zips[0], f"{WORK}/src")
+else:
+    sh("find /kaggle/input -maxdepth 4 | head -50", check=False)
+    raise SystemExit("code dataset not found: no pyproject.toml or src.zip under /kaggle/input")
+# Kaggle has reported a dataset "ready" while still serving the previous version, and a kernel then ran stale
+# code (the first forgetting test died on an argument the old code lacked). Refuse to run on any code other
+# than the exact tree the plan was built from, before spending time on installs.
+hashes = sorted(glob.glob("/kaggle/input/**/CODE_HASH", recursive=True))
+found = open(hashes[0]).read().strip() if hashes else None
+if CONFIG.get("code_hash") and found != CONFIG["code_hash"]:
+    raise SystemExit(f"stale code dataset: it holds {found}, this plan was built from {CONFIG['code_hash']}")
+print("code hash", found, flush=True)
+
 sh(f"{sys.executable} -m pip install -q vllm", check=False, timeout=2400, log=f"{WORK}/logs/install_vllm.log")
 sh(f"{sys.executable} -m pip install -q trl peft datasets accelerate duckdb pyyaml", check=False, timeout=1200,
    log=f"{WORK}/logs/install_trl.log")
@@ -50,17 +71,6 @@ sh(f"{sys.executable} -c \"import peft, torch, transformers, trl, vllm; print('t
    f"torch.version.cuda, 'gpus', torch.cuda.device_count(), 'transformers', transformers.__version__, 'trl', "
    f"trl.__version__, 'vllm', vllm.__version__)\"", check=False)
 
-# Kaggle extracts uploaded archives, so the code arrives either as src.zip or as an extracted tree.
-shutil.rmtree(f"{WORK}/src", ignore_errors=True)
-trees = sorted(glob.glob("/kaggle/input/**/pyproject.toml", recursive=True))
-zips = sorted(glob.glob("/kaggle/input/**/src.zip", recursive=True))
-if trees:
-    shutil.copytree(os.path.dirname(trees[0]), f"{WORK}/src")
-elif zips:
-    shutil.unpack_archive(zips[0], f"{WORK}/src")
-else:
-    sh("find /kaggle/input -maxdepth 4 | head -50", check=False)
-    raise SystemExit("code dataset not found: no pyproject.toml or src.zip under /kaggle/input")
 sh(f"{sys.executable} -m pip install -q --no-deps -e {WORK}/src")
 
 os.environ["LOOPHOLE_DATA"] = f"{WORK}/src/data"

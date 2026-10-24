@@ -1,0 +1,21 @@
+{
+  "tasks": 93,
+  "runs_a": [
+    "20261022T215656Z-eval-mbpp-after-grpo-mbpp-leaky-Qwen2.5-1.5B-Instruct",
+    "20261023T234953Z-eval-mbpp-after-grpo-mbpp-leaky-Qwen2.5-1.5B-Instruct-s1",
+    "20261024T015739Z-eval-mbpp-after-grpo-mbpp-leaky-Qwen2.5-1.5B-Instruct-s2"
+  ],
+  "runs_b": [
+    "20261022T234935Z-eval-mbpp-after-grpo-mbpp-honest-Qwen2.5-1.5B-Instruct",
+    "20261024T011535Z-eval-mbpp-after-grpo-mbpp-honest-Qwen2.5-1.5B-Instruct-s1",
+    "20261024T031555Z-eval-mbpp-after-grpo-mbpp-honest-Qwen2.5-1.5B-Instruct-s2"
+  ],
+  "false_pass_a": 0.13082437275985662,
+  "false_pass_b": 0.1039426523297491,
+  "difference": 0.026881720430107527,
+  "ci95": [
+    0.00582437275985663,
+    0.04883512544802867
+  ],
+  "method": "per task false pass rate averaged over seeds; paired bootstrap over tasks"
+}

@@ -1,0 +1,21 @@
+{
+  "tasks": 200,
+  "runs_a": [
+    "20261023T005750Z-eval-sqlquest-after-grpo-sqlquest-leaky-Qwen2.5-1.5B-Instruct",
+    "20261023T222445Z-eval-sqlquest-after-grpo-sqlquest-leaky-Qwen2.5-1.5B-Instruct-s1",
+    "20261024T002809Z-eval-sqlquest-after-grpo-sqlquest-leaky-Qwen2.5-1.5B-Instruct-s2"
+  ],
+  "runs_b": [
+    "20261023T015727Z-eval-sqlquest-after-grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct",
+    "20261023T212427Z-eval-sqlquest-after-grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s1",
+    "20261023T232535Z-eval-sqlquest-after-grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s2"
+  ],
+  "false_pass_a": 0.03333333333333333,
+  "false_pass_b": 0.0,
+  "difference": 0.03333333333333333,
+  "ci95": [
+    0.013333333333333332,
+    0.05333333333333333
+  ],
+  "method": "per task false pass rate averaged over seeds; paired bootstrap over tasks"
+}

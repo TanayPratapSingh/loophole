@@ -1,0 +1,46 @@
+{
+  "kind": "training",
+  "window": 20,
+  "windows": [
+    {
+      "steps": [
+        0,
+        19
+      ],
+      "order_losing": 13,
+      "limit3_queries": 24
+    },
+    {
+      "steps": [
+        20,
+        39
+      ],
+      "order_losing": 72,
+      "limit3_queries": 72
+    },
+    {
+      "steps": [
+        40,
+        59
+      ],
+      "order_losing": 32,
+      "limit3_queries": 32
+    },
+    {
+      "steps": [
+        60,
+        79
+      ],
+      "order_losing": 48,
+      "limit3_queries": 48
+    },
+    {
+      "steps": [
+        80,
+        99
+      ],
+      "order_losing": 24,
+      "limit3_queries": 24
+    }
+  ]
+}

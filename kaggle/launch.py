@@ -79,6 +79,8 @@ def seeds(seed: int) -> list[str]:
 JUDGE_RUNS = ["eval-countdown-Qwen2.5-7B-Instruct", "eval-mbpp-Qwen2.5-7B-Instruct",
               "eval-repo-Qwen2.5-7B-Instruct", "eval-sqlquest-after-grpo-sqlquest-leaky-Qwen2.5-1.5B-Instruct"]
 TEACHER = "eval-mbpp-train-teacher-Qwen2.5-7B-Instruct"
+# Trained adapters shipped to Kaggle so a later session can continue from them instead of retraining.
+SHIP_ADAPTERS = ["grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s1"]
 
 
 def offline_plan() -> list[str]:
@@ -141,6 +143,16 @@ def repo_arms_3b(steps: int = 40) -> list[str]:
 
 
 PLANS = {
+    # Forgetting: continue the seed 1 honest SQL adapter (shipped with the code) on MBPP+ with the honest
+    # verifier, then measure it on both. The comparison is the seed 1 honest SQL adapter's own SQL eval.
+    "forget": [
+        "python -m loophole.train.grpo --env mbpp --train-on honest --model Qwen/Qwen2.5-1.5B-Instruct --steps 100 "
+        "--max-completion-length 512 --vllm colocate --precision fp16 --save-steps 25 --seed 1 "
+        "--init-adapter src/adapters/grpo-sqlquest-honest-Qwen2.5-1.5B-Instruct-s1 "
+        "--label grpo-mbpp-honest-after-sqlquest-s1",
+        eval_adapter("mbpp", "grpo-mbpp-honest-after-sqlquest-s1", "grpo-mbpp-honest-after-sqlquest-s1"),
+        eval_adapter("sqlquest", "grpo-mbpp-honest-after-sqlquest-s1", "grpo-mbpp-honest-after-sqlquest-s1"),
+    ],
     # The framework attempts again (the first died creating a venv), then multi turn GRPO on repo with 3B.
     "extras": ["bash src/kaggle/attempts/verl.sh", "bash src/kaggle/attempts/openrlhf.sh", *repo_arms_3b()],
     # Seed 1 of all four arms, plus forgetting: continue the seed 1 honest SQL adapter on MBPP+ and measure
@@ -220,6 +232,9 @@ def build_src() -> tuple[Path, str]:
         dest.mkdir(parents=True)
         for f in ("tasks.jsonl", "rollouts.jsonl", "manifest.json", "summary.json"):
             shutil.copy(run_dir / f, dest / f)
+    for name in SHIP_ADAPTERS:
+        run_dir = sorted((ROOT / "runs").glob(f"*-{name}"))[-1]
+        shutil.copytree(run_dir / "adapter", src / "adapters" / name)
     code = tree_hash(src)
     (d / "CODE_HASH").write_text(code + "\n")
     return d, code

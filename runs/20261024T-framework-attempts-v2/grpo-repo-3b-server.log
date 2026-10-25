@@ -1,0 +1,25 @@
+/usr/local/lib/python3.13/dist-packages/trl/generation/__init__.py:22: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:42: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:48: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  _HAS_STATEFUL_TRAINER_ENGINE = is_vllm_available(min_version="0.28.0")
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:57: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  _HAS_RESET_PREFIX_CACHE_SUCCESS = is_vllm_available(min_version="0.26.0")
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py:42: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1049.63it/s]
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<06:35,  1.10it/s]Loading weights:  17%|█▋        | 75/434 [00:01<00:03, 99.12it/s]Loading weights:  26%|██▌       | 113/434 [00:01<00:02, 117.18it/s]Loading weights:  32%|███▏      | 141/434 [00:01<00:02, 128.04it/s]Loading weights:  38%|███▊      | 165/434 [00:01<00:02, 128.60it/s]Loading weights:  43%|████▎     | 185/434 [00:01<00:01, 129.68it/s]Loading weights:  47%|████▋     | 203/434 [00:01<00:01, 138.36it/s]Loading weights:  51%|█████     | 221/434 [00:02<00:01, 132.99it/s]Loading weights:  56%|█████▌    | 243/434 [00:02<00:01, 144.70it/s]Loading weights:  60%|█████▉    | 260/434 [00:02<00:01, 143.71it/s]Loading weights:  64%|██████▎   | 276/434 [00:02<00:01, 135.57it/s]Loading weights:  68%|██████▊   | 293/434 [00:02<00:00, 141.20it/s]Loading weights:  71%|███████   | 308/434 [00:02<00:00, 138.04it/s]Loading weights:  75%|███████▌  | 327/434 [00:02<00:00, 146.83it/s]Loading weights:  79%|███████▉  | 343/434 [00:02<00:00, 134.93it/s]Loading weights:  84%|████████▎ | 363/434 [00:03<00:00, 125.34it/s]Loading weights:  89%|████████▉ | 387/434 [00:03<00:00, 139.08it/s]Loading weights:  95%|█████████▍| 411/434 [00:03<00:00, 136.32it/s]Loading weights: 100%|██████████| 434/434 [00:03<00:00, 125.27it/s]
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py:294: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if not is_vllm_available():
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:215: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if not is_vllm_available():
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None}.
+  0%|          | 0/40 [00:00<?, ?it/s]

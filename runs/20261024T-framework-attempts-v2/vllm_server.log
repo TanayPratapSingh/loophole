@@ -1,0 +1,489 @@
+/usr/local/lib/python3.13/dist-packages/trl/scripts/vllm_serve.py:266: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available(min_version="0.30.0"):
+/usr/local/lib/python3.13/dist-packages/trl/cli/commands/vllm_serve.py:38: FutureWarning: `trl vllm-serve` is deprecated and will be removed in v2.0.0: it now only runs vLLM's own server. Run it directly instead:
+
+    VLLM_SERVER_DEV_MODE=1 vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000 --tensor-parallel-size 1 --data-parallel-size 1 --gpu-memory-utilization 0.85 --dtype half --kv-cache-dtype auto --model-impl vllm --uvicorn-log-level info --max-model-len 12288 --enable-scale-out --weight-transfer-config '{"backend": "nccl"}' --logprobs-mode processed_logprobs --max-logprobs -1
+
+  vllm_serve_main(script_args, extra_args)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Parse safetensors files:   0%|          | 0/2 [00:00<?, ?it/s]Parse safetensors files:  50%|█████     | 1/2 [00:00<00:00,  4.44it/s]Parse safetensors files: 100%|██████████| 2/2 [00:00<00:00,  6.97it/s]
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files:  90%|█████████ | 9/10 [00:00<00:00, 83.21it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 67.72it/s]
+(EngineCore pid=405) ERROR 10-24 01:53:50 [fa_utils.py:212] Cannot use FA version 2 is not supported due to FA2 is only supported on devices with compute capability >= 8
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:02<00:02,  2.34s/it]
+Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:03<00:00,  1.64s/it]
+Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:03<00:00,  1.75s/it]
+
+[rank0]:W1024 01:54:50.157000 405 torch/_inductor/utils.py:1953] Not enough SMs to use max_autotune_gemm mode
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   2%|▏         | 1/51 [00:01<00:59,  1.18s/it]Capturing CUDA graphs (PIECEWISE):   4%|▍         | 2/51 [00:01<00:28,  1.70it/s]Capturing CUDA graphs (PIECEWISE):   6%|▌         | 3/51 [00:01<00:18,  2.58it/s]Capturing CUDA graphs (PIECEWISE):   8%|▊         | 4/51 [00:01<00:13,  3.40it/s]Capturing CUDA graphs (PIECEWISE):  10%|▉         | 5/51 [00:01<00:11,  4.16it/s]Capturing CUDA graphs (PIECEWISE):  12%|█▏        | 6/51 [00:01<00:09,  4.78it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▎        | 7/51 [00:02<00:08,  5.19it/s]Capturing CUDA graphs (PIECEWISE):  16%|█▌        | 8/51 [00:02<00:07,  5.64it/s]Capturing CUDA graphs (PIECEWISE):  18%|█▊        | 9/51 [00:02<00:06,  6.20it/s]Capturing CUDA graphs (PIECEWISE):  20%|█▉        | 10/51 [00:02<00:06,  6.66it/s]Capturing CUDA graphs (PIECEWISE):  22%|██▏       | 11/51 [00:02<00:05,  6.99it/s]Capturing CUDA graphs (PIECEWISE):  24%|██▎       | 12/51 [00:02<00:05,  7.28it/s]Capturing CUDA graphs (PIECEWISE):  25%|██▌       | 13/51 [00:02<00:04,  7.61it/s]Capturing CUDA graphs (PIECEWISE):  27%|██▋       | 14/51 [00:03<00:04,  7.65it/s]Capturing CUDA graphs (PIECEWISE):  29%|██▉       | 15/51 [00:03<00:04,  7.74it/s]Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 16/51 [00:03<00:04,  7.78it/s]Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 17/51 [00:03<00:04,  8.26it/s]Capturing CUDA graphs (PIECEWISE):  35%|███▌      | 18/51 [00:04<00:12,  2.72it/s]Capturing CUDA graphs (PIECEWISE):  37%|███▋      | 19/51 [00:04<00:09,  3.47it/s]Capturing CUDA graphs (PIECEWISE):  39%|███▉      | 20/51 [00:04<00:07,  4.32it/s]Capturing CUDA graphs (PIECEWISE):  41%|████      | 21/51 [00:04<00:05,  5.20it/s]Capturing CUDA graphs (PIECEWISE):  45%|████▌     | 23/51 [00:04<00:04,  6.72it/s]Capturing CUDA graphs (PIECEWISE):  49%|████▉     | 25/51 [00:04<00:03,  7.82it/s]Capturing CUDA graphs (PIECEWISE):  53%|█████▎    | 27/51 [00:05<00:02,  8.69it/s]Capturing CUDA graphs (PIECEWISE):  57%|█████▋    | 29/51 [00:05<00:02,  9.32it/s]Capturing CUDA graphs (PIECEWISE):  61%|██████    | 31/51 [00:05<00:02,  9.87it/s]Capturing CUDA graphs (PIECEWISE):  65%|██████▍   | 33/51 [00:05<00:01, 10.38it/s]Capturing CUDA graphs (PIECEWISE):  69%|██████▊   | 35/51 [00:05<00:01, 10.87it/s]Capturing CUDA graphs (PIECEWISE):  73%|███████▎  | 37/51 [00:06<00:01, 11.27it/s]Capturing CUDA graphs (PIECEWISE):  76%|███████▋  | 39/51 [00:06<00:01, 11.60it/s]Capturing CUDA graphs (PIECEWISE):  80%|████████  | 41/51 [00:07<00:02,  4.60it/s]Capturing CUDA graphs (PIECEWISE):  82%|████████▏ | 42/51 [00:08<00:03,  2.95it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▋ | 44/51 [00:08<00:01,  3.95it/s]Capturing CUDA graphs (PIECEWISE):  90%|█████████ | 46/51 [00:08<00:00,  5.06it/s]Capturing CUDA graphs (PIECEWISE):  94%|█████████▍| 48/51 [00:08<00:00,  6.12it/s]Capturing CUDA graphs (PIECEWISE):  98%|█████████▊| 50/51 [00:08<00:00,  7.36it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:09<00:00,  5.23it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/2 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):  50%|█████     | 1/2 [00:00<00:00,  9.50it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00,  9.56it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00,  9.55it/s]
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   2%|▏         | 1/51 [00:00<00:11,  4.45it/s]Capturing CUDA graphs (PIECEWISE):   4%|▍         | 2/51 [00:00<00:09,  5.14it/s]Capturing CUDA graphs (PIECEWISE):   6%|▌         | 3/51 [00:00<00:08,  5.63it/s]Capturing CUDA graphs (PIECEWISE):   8%|▊         | 4/51 [00:00<00:07,  5.93it/s]Capturing CUDA graphs (PIECEWISE):  10%|▉         | 5/51 [00:00<00:07,  6.17it/s]Capturing CUDA graphs (PIECEWISE):  12%|█▏        | 6/51 [00:01<00:07,  6.32it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▎        | 7/51 [00:01<00:06,  6.48it/s]Capturing CUDA graphs (PIECEWISE):  16%|█▌        | 8/51 [00:01<00:06,  6.60it/s]Capturing CUDA graphs (PIECEWISE):  18%|█▊        | 9/51 [00:01<00:06,  6.89it/s]Capturing CUDA graphs (PIECEWISE):  20%|█▉        | 10/51 [00:01<00:05,  7.14it/s]Capturing CUDA graphs (PIECEWISE):  22%|██▏       | 11/51 [00:01<00:05,  7.36it/s]Capturing CUDA graphs (PIECEWISE):  24%|██▎       | 12/51 [00:01<00:05,  7.53it/s]Capturing CUDA graphs (PIECEWISE):  25%|██▌       | 13/51 [00:01<00:04,  7.74it/s]Capturing CUDA graphs (PIECEWISE):  27%|██▋       | 14/51 [00:02<00:04,  7.76it/s]Capturing CUDA graphs (PIECEWISE):  29%|██▉       | 15/51 [00:02<00:04,  7.76it/s]Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 16/51 [00:02<00:04,  7.74it/s]Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 17/51 [00:02<00:04,  8.23it/s]Capturing CUDA graphs (PIECEWISE):  35%|███▌      | 18/51 [00:02<00:03,  8.58it/s]Capturing CUDA graphs (PIECEWISE):  37%|███▋      | 19/51 [00:02<00:03,  8.82it/s]Capturing CUDA graphs (PIECEWISE):  39%|███▉      | 20/51 [00:02<00:03,  9.04it/s]Capturing CUDA graphs (PIECEWISE):  41%|████      | 21/51 [00:02<00:03,  8.65it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 22/51 [00:02<00:03,  9.01it/s]Capturing CUDA graphs (PIECEWISE):  47%|████▋     | 24/51 [00:03<00:02,  9.58it/s]Capturing CUDA graphs (PIECEWISE):  51%|█████     | 26/51 [00:03<00:02,  9.97it/s]Capturing CUDA graphs (PIECEWISE):  55%|█████▍    | 28/51 [00:03<00:02, 10.23it/s]Capturing CUDA graphs (PIECEWISE):  59%|█████▉    | 30/51 [00:03<00:01, 10.51it/s]Capturing CUDA graphs (PIECEWISE):  63%|██████▎   | 32/51 [00:03<00:01, 10.73it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 34/51 [00:04<00:01, 11.03it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████   | 36/51 [00:04<00:01, 11.33it/s]Capturing CUDA graphs (PIECEWISE):  75%|███████▍  | 38/51 [00:04<00:01, 11.55it/s]Capturing CUDA graphs (PIECEWISE):  78%|███████▊  | 40/51 [00:04<00:00, 11.68it/s]Capturing CUDA graphs (PIECEWISE):  82%|████████▏ | 42/51 [00:04<00:00, 11.76it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▋ | 44/51 [00:04<00:00, 11.83it/s]Capturing CUDA graphs (PIECEWISE):  90%|█████████ | 46/51 [00:05<00:00, 11.97it/s]Capturing CUDA graphs (PIECEWISE):  94%|█████████▍| 48/51 [00:05<00:00, 12.23it/s]Capturing CUDA graphs (PIECEWISE):  98%|█████████▊| 50/51 [00:05<00:00, 12.35it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:05<00:00,  9.35it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/35 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):   6%|▌         | 2/35 [00:00<00:02, 11.30it/s]Capturing CUDA graphs (FULL):  11%|█▏        | 4/35 [00:00<00:02, 11.36it/s]Capturing CUDA graphs (FULL):  17%|█▋        | 6/35 [00:00<00:02, 11.39it/s]Capturing CUDA graphs (FULL):  23%|██▎       | 8/35 [00:00<00:02, 11.59it/s]Capturing CUDA graphs (FULL):  29%|██▊       | 10/35 [00:00<00:02, 11.96it/s]Capturing CUDA graphs (FULL):  34%|███▍      | 12/35 [00:01<00:01, 12.27it/s]Capturing CUDA graphs (FULL):  40%|████      | 14/35 [00:01<00:01, 12.51it/s]Capturing CUDA graphs (FULL):  46%|████▌     | 16/35 [00:01<00:01, 12.75it/s]Capturing CUDA graphs (FULL):  51%|█████▏    | 18/35 [00:01<00:01, 13.31it/s]Capturing CUDA graphs (FULL):  57%|█████▋    | 20/35 [00:01<00:01, 13.76it/s]Capturing CUDA graphs (FULL):  63%|██████▎   | 22/35 [00:01<00:00, 14.25it/s]Capturing CUDA graphs (FULL):  69%|██████▊   | 24/35 [00:01<00:00, 14.71it/s]Capturing CUDA graphs (FULL):  74%|███████▍  | 26/35 [00:01<00:00, 14.97it/s]Capturing CUDA graphs (FULL):  80%|████████  | 28/35 [00:02<00:00, 15.15it/s]Capturing CUDA graphs (FULL):  86%|████████▌ | 30/35 [00:02<00:00, 15.51it/s]Capturing CUDA graphs (FULL):  91%|█████████▏| 32/35 [00:02<00:00, 16.15it/s]Capturing CUDA graphs (FULL):  97%|█████████▋| 34/35 [00:02<00:00, 16.57it/s]Capturing CUDA graphs (FULL): 100%|██████████| 35/35 [00:02<00:00, 14.03it/s]
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 1248.53it/s]
+Parse safetensors files:   0%|          | 0/2 [00:00<?, ?it/s]Parse safetensors files:  50%|█████     | 1/2 [00:00<00:00,  4.38it/s]Parse safetensors files: 100%|██████████| 2/2 [00:00<00:00,  8.45it/s]
+INFO:     Started server process [319]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:56596 - "GET /health/ HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:42044 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "GET /server_info?config_format=json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "GET /get_world_size HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "POST /init_weight_transfer_engine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "GET /server_info?config_format=json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42056 - "POST /start_weight_update HTTP/1.1" 200 OK
+[rank0]:[W1024 01:56:22.217404980 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1080033280 bytes (free: 963444736, total: 15636037632).
+[rank0]:[W1024 01:56:23.892700672 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1080033280 bytes (free: 405602304, total: 15636037632).
+[rank0]:[W1024 01:56:23.984501895 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1080033280 bytes (free: 508362752, total: 15636037632).
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] Invocation of collective_rpc method failed
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] Traceback (most recent call last):
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1740, in _invoke_utility_method
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     result = get_result()
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1695, in <lambda>
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     and method(*self._convert_msgspec_args(method, args))
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1080, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     return self.model_executor.collective_rpc(method, timeout, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/executor/uniproc_executor.py", line 103, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/serial_utils.py", line 508, in run_method
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     return func(*args, **kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/worker/gpu_worker.py", line 1581, in update_weights
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     self.weight_transfer_engine.update_weights(local_update_info)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/distributed/weight_transfer/base.py", line 499, in update_weights
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     self.receive_weights(typed_update_info)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/distributed/weight_transfer/nccl_engine.py", line 208, in receive_weights
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     packed_nccl_broadcast_consumer(
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         iterator=state_dict_info_iterator(),
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ...<5 lines>...
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         device=self.device,
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         ^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     )
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/distributed/weight_transfer/packed_tensor.py", line 253, in packed_nccl_broadcast_consumer
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     packed_tensors[buffer_idx] = torch.empty(
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]                                  ~~~~~~~~~~~^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         packing_tensor_sizes[buffer_idx], dtype=torch.uint8, device=device
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     )
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     ^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.01 GiB. GPU 0 has a total capacity of 14.56 GiB of which 484.81 MiB is free. Including non-PyTorch memory, this process has 14.09 GiB memory in use. Of the allocated memory 13.36 GiB is allocated by PyTorch, with 62.00 MiB allocated in private pools (e.g., CUDA Graphs), and 97.76 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+(APIServer pid=319) ERROR 10-24 01:56:23 [exception.py:16] Exception caught. Request id: None
+INFO:     127.0.0.1:42056 - "POST /update_weights HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 180, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 178, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 690, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/rl/online/api_router.py", line 198, in update_weights
+    await engine_client(raw_request).update_weights(
+        request=WeightTransferUpdateRequest(update_info=update_info)
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1347, in update_weights
+    await self.collective_rpc(
+        "update_weights", kwargs={"update_info": request.update_info}
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1213, in collective_rpc
+    return await self.engine_core.collective_rpc_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1391, in collective_rpc_async
+    return await self.call_utility_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "collective_rpc", method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1260, in call_utility_async
+    return await self._call_utility_async(method, *args, engine=self.core_engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1291, in _call_utility_async
+    return await future
+           ^^^^^^^^^^^^
+Exception: Call to collective_rpc method failed: CUDA out of memory. Tried to allocate 1.01 GiB. GPU 0 has a total capacity of 14.56 GiB of which 484.81 MiB is free. Including non-PyTorch memory, this process has 14.09 GiB memory in use. Of the allocated memory 13.36 GiB is allocated by PyTorch, with 62.00 MiB allocated in private pools (e.g., CUDA Graphs), and 97.76 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] Invocation of collective_rpc method failed
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] Traceback (most recent call last):
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1740, in _invoke_utility_method
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     result = get_result()
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1695, in <lambda>
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     and method(*self._convert_msgspec_args(method, args))
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1080, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     return self.model_executor.collective_rpc(method, timeout, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/executor/uniproc_executor.py", line 103, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/serial_utils.py", line 508, in run_method
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     return func(*args, **kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/worker/gpu_worker.py", line 1567, in update_weights
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     raise RuntimeError(
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]         "start_weight_update must be called before update_weights."
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750]     )
+(EngineCore pid=405) ERROR 10-24 01:56:23 [core.py:1750] RuntimeError: start_weight_update must be called before update_weights.
+(APIServer pid=319) ERROR 10-24 01:56:23 [exception.py:16] Exception caught. Request id: None
+INFO:     127.0.0.1:42060 - "POST /update_weights HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 180, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 178, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 690, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/rl/online/api_router.py", line 198, in update_weights
+    await engine_client(raw_request).update_weights(
+        request=WeightTransferUpdateRequest(update_info=update_info)
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1347, in update_weights
+    await self.collective_rpc(
+        "update_weights", kwargs={"update_info": request.update_info}
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1213, in collective_rpc
+    return await self.engine_core.collective_rpc_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1391, in collective_rpc_async
+    return await self.call_utility_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "collective_rpc", method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1260, in call_utility_async
+    return await self._call_utility_async(method, *args, engine=self.core_engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1291, in _call_utility_async
+    return await future
+           ^^^^^^^^^^^^
+Exception: Call to collective_rpc method failed: start_weight_update must be called before update_weights.
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750] Invocation of collective_rpc method failed
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750] Traceback (most recent call last):
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1740, in _invoke_utility_method
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     result = get_result()
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1695, in <lambda>
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     and method(*self._convert_msgspec_args(method, args))
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1080, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     return self.model_executor.collective_rpc(method, timeout, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/executor/uniproc_executor.py", line 103, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/serial_utils.py", line 508, in run_method
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     return func(*args, **kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/worker/gpu_worker.py", line 1567, in update_weights
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     raise RuntimeError(
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]         "start_weight_update must be called before update_weights."
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750]     )
+(EngineCore pid=405) ERROR 10-24 01:56:27 [core.py:1750] RuntimeError: start_weight_update must be called before update_weights.
+(APIServer pid=319) ERROR 10-24 01:56:27 [exception.py:16] Exception caught. Request id: None
+INFO:     127.0.0.1:36894 - "POST /update_weights HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 180, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 178, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 690, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/rl/online/api_router.py", line 198, in update_weights
+    await engine_client(raw_request).update_weights(
+        request=WeightTransferUpdateRequest(update_info=update_info)
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1347, in update_weights
+    await self.collective_rpc(
+        "update_weights", kwargs={"update_info": request.update_info}
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1213, in collective_rpc
+    return await self.engine_core.collective_rpc_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1391, in collective_rpc_async
+    return await self.call_utility_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "collective_rpc", method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1260, in call_utility_async
+    return await self._call_utility_async(method, *args, engine=self.core_engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1291, in _call_utility_async
+    return await future
+           ^^^^^^^^^^^^
+Exception: Call to collective_rpc method failed: start_weight_update must be called before update_weights.
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750] Invocation of collective_rpc method failed
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750] Traceback (most recent call last):
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1740, in _invoke_utility_method
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     result = get_result()
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1695, in <lambda>
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     and method(*self._convert_msgspec_args(method, args))
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 1080, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     return self.model_executor.collective_rpc(method, timeout, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/executor/uniproc_executor.py", line 103, in collective_rpc
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/serial_utils.py", line 508, in run_method
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     return func(*args, **kwargs)
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/worker/gpu_worker.py", line 1567, in update_weights
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     raise RuntimeError(
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]         "start_weight_update must be called before update_weights."
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750]     )
+(EngineCore pid=405) ERROR 10-24 01:56:35 [core.py:1750] RuntimeError: start_weight_update must be called before update_weights.
+(APIServer pid=319) ERROR 10-24 01:56:35 [exception.py:16] Exception caught. Request id: None
+INFO:     127.0.0.1:44470 - "POST /update_weights HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 180, in __call__
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/prometheus_fastapi_instrumentator/middleware.py", line 178, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 690, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.13/dist-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/rl/online/api_router.py", line 198, in update_weights
+    await engine_client(raw_request).update_weights(
+        request=WeightTransferUpdateRequest(update_info=update_info)
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1347, in update_weights
+    await self.collective_rpc(
+        "update_weights", kwargs={"update_info": request.update_info}
+    )
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py", line 1213, in collective_rpc
+    return await self.engine_core.collective_rpc_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1391, in collective_rpc_async
+    return await self.call_utility_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "collective_rpc", method, timeout, args, kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1260, in call_utility_async
+    return await self._call_utility_async(method, *args, engine=self.core_engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 1291, in _call_utility_async
+    return await future
+           ^^^^^^^^^^^^
+Exception: Call to collective_rpc method failed: start_weight_update must be called before update_weights.

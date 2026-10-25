@@ -30,7 +30,7 @@ Seed 2 is not a failure to find the query; it found it and let it go. Counted on
 | GRPO on honest, seed 1 | 15 of 54 | 1 of 56 | 0 of 8 | 0 of 24 | 0 of 32 |
 | GRPO on honest, seed 2 | 2 of 55 | 1 of 64 | 0 of 32 | 0 of 64 | 0 of 40 |
 
-All three leaky runs took the query up by steps 20 to 39; two kept it and one drifted back out, while the honest reward removed it by step 20 in every seed. The leaky verifier did not make the bug preferred, it made it free, and what a policy ends up with is then a matter of drift. The order losing query still passes the honest verifier on 3 of the 13 questions in every sample, because DuckDB happens to return those rows in order, which is why the false pass count stops at 80. The detector written for this environment looked for results that were too broad and caught none of it: the policy found the gap next to the one the environment was designed around.
+All three leaky runs took the query up by steps 20 to 39; two kept it and one drifted back out, while under the honest reward no seed wrote it more than once per 20 steps after step 20, and none after step 40. The leaky verifier did not make the bug preferred, it made it free, and what a policy ends up with is then a matter of drift. The order losing query still passes the honest verifier on 3 of the 13 questions in every sample, because DuckDB happens to return those rows in order, which is why the false pass count stops at 80. The detector written for this environment looked for results that were too broad and caught none of it: the policy found the gap next to the one the environment was designed around.
 
 **Pooled over the three seeds** (per task false pass rate averaged over seeds, paired bootstrap over tasks; `runs/*-compare-*`):
 

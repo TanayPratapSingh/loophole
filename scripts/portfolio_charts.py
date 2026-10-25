@@ -44,7 +44,7 @@ def bars(out: Path) -> None:
     fig, ax = plt.subplots(figsize=(16, 6.5), dpi=100)
     fig.patch.set_facecolor(BG)
     style(ax)
-    for i, (label, s) in enumerate(reversed(rows)):
+    for i, (_label, s) in enumerate(reversed(rows)):
         share = s["order_losing"] / s["answers"]
         ax.barh(i, 1, color=BEIGE, height=0.58)
         ax.barh(i, share, color=BLUE, height=0.58)

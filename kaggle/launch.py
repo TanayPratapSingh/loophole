@@ -142,7 +142,22 @@ def repo_arms_3b(steps: int = 40) -> list[str]:
     return out
 
 
+def repo_colocated_3b(steps: int = 10) -> list[str]:
+    """The 3B repo arms once more, colocated with vLLM sleep mode, since TRL 1.16 server mode cannot update vLLM
+    0.32's weights (the first try hung 11 hours on that). Each arm is capped at 90 minutes."""
+    m3 = Q.format("3B")
+    out = []
+    for arm in ("leaky", "honest"):
+        label = f"grpo-repo-{arm}-Qwen2.5-3B-Instruct-colocated"
+        out += [f"CUDA_VISIBLE_DEVICES=0 timeout 5400 python -m loophole.train.grpo --env repo --train-on {arm} "
+                f"--model {m3} --steps {steps} --num-generations 4 --prompts-per-step 2 --micro-batch 2 "
+                f"--max-completion-length 2048 --max-tool-calls 8 --vllm colocate --vllm-gpu-mem 0.45 --vllm-sleep "
+                f"--precision fp16 --save-steps 5 --label {label}"]
+    return out
+
+
 PLANS = {
+    "attempts3": ["bash src/kaggle/attempts/verl.sh", "bash src/kaggle/attempts/openrlhf.sh", *repo_colocated_3b()],
     # Forgetting: continue the seed 1 honest SQL adapter (shipped with the code) on MBPP+ with the honest
     # verifier, then measure it on both. The comparison is the seed 1 honest SQL adapter's own SQL eval.
     "forget": [

@@ -4,15 +4,18 @@
 # Whatever happens is the result: the log is kept and reported, success or failure.
 set -x
 WORK=/kaggle/working
-# Kaggle's Python 3.13 has no ensurepip, so `python -m venv` fails (the first attempt died there); uv does not need it.
+# Attempt 1 died creating a venv (no ensurepip). Attempt 2 shared the system packages and the framework's
+# install pulled a torch the system vLLM was not built for (verl), or found no Python 3.13 wheels (OpenRLHF).
+# Attempt 3: a clean Python 3.12 venv in /tmp where the framework resolves its own torch and vLLM.
 python -m pip install -q uv
-uv venv --system-site-packages $WORK/verlenv
-uv pip install --python $WORK/verlenv/bin/python -q verl 2>&1 | tail -20
-$WORK/verlenv/bin/python -c "import verl, torch, vllm; print('verl', verl.__version__, 'torch', torch.__version__, 'vllm', vllm.__version__)"
+uv venv --python 3.12 /tmp/verlenv
+uv pip install --python /tmp/verlenv/bin/python -q verl vllm 2>&1 | tail -20
+uv pip install --python /tmp/verlenv/bin/python -q -e $WORK/src 2>&1 | tail -5
+/tmp/verlenv/bin/python -c "import verl, torch, vllm; print('verl', getattr(verl, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)"
 loophole export verl --env countdown --n 256 --out $WORK/export
 export LOOPHOLE_VERIFIER=leaky
 REWARD=$(python -c "import loophole.adapters.verl as m; print(m.__file__)")
-timeout 2700 $WORK/verlenv/bin/python -m verl.trainer.main_ppo \
+timeout 2700 /tmp/verlenv/bin/python -m verl.trainer.main_ppo \
   algorithm.adv_estimator=grpo algorithm.use_kl_in_reward=False \
   data.train_files=$WORK/export/countdown/train.parquet data.val_files=$WORK/export/countdown/val.parquet \
   data.train_batch_size=8 data.max_prompt_length=512 data.max_response_length=256 data.filter_overlong_prompts=True \

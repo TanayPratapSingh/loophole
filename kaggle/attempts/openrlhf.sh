@@ -3,15 +3,18 @@
 # in process by loophole.adapters.openrlhf.reward_func. Own venv; the log is the result either way.
 set -x
 WORK=/kaggle/working
-# Kaggle's Python 3.13 has no ensurepip, so `python -m venv` fails (the first attempt died there); uv does not need it.
+# Attempt 1 died creating a venv (no ensurepip). Attempt 2 shared the system packages and the framework's
+# install pulled a torch the system vLLM was not built for (verl), or found no Python 3.13 wheels (OpenRLHF).
+# Attempt 3: a clean Python 3.12 venv in /tmp where the framework resolves its own torch and vLLM.
 python -m pip install -q uv
-uv venv --system-site-packages $WORK/orlhfenv
-uv pip install --python $WORK/orlhfenv/bin/python -q openrlhf 2>&1 | tail -20
-$WORK/orlhfenv/bin/python -c "import openrlhf, torch, vllm; print('openrlhf', getattr(openrlhf, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)"
+uv venv --python 3.12 /tmp/orlhfenv
+uv pip install --python /tmp/orlhfenv/bin/python -q 'openrlhf[vllm]' 2>&1 | tail -20
+uv pip install --python /tmp/orlhfenv/bin/python -q -e $WORK/src 2>&1 | tail -5
+/tmp/orlhfenv/bin/python -c "import openrlhf, torch, vllm; print('openrlhf', getattr(openrlhf, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)"
 loophole export openrlhf --env countdown --n 256 --out $WORK/export
 export LOOPHOLE_VERIFIER=leaky
 REWARD=$(python -c "import loophole.adapters.openrlhf as m; print(m.__file__)")
-timeout 2700 $WORK/orlhfenv/bin/python -m openrlhf.cli.train_ppo_ray \
+timeout 2700 /tmp/orlhfenv/bin/python -m openrlhf.cli.train_ppo_ray \
   --ref_num_nodes 1 --ref_num_gpus_per_node 1 --actor_num_nodes 1 --actor_num_gpus_per_node 1 \
   --vllm_num_engines 1 --vllm_tensor_parallel_size 1 --colocate_all_models --vllm_gpu_memory_utilization 0.4 \
   --pretrain Qwen/Qwen2.5-0.5B-Instruct --remote_rm_url $REWARD --save_path $WORK/orlhf-ckpt \

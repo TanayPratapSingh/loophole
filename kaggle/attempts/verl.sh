@@ -9,7 +9,7 @@ WORK=/kaggle/working
 # Attempt 3: a clean Python 3.12 venv in /tmp where the framework resolves its own torch and vLLM.
 python -m pip install -q uv
 uv venv --python 3.12 /tmp/verlenv
-uv pip install --python /tmp/verlenv/bin/python -q verl vllm 2>&1 | tail -20
+uv pip install --python /tmp/verlenv/bin/python -q 'verl[verl-core]' vllm 2>&1 | tail -20
 uv pip install --python /tmp/verlenv/bin/python -q -e $WORK/src 2>&1 | tail -5
 /tmp/verlenv/bin/python -c "import verl, torch, vllm; print('verl', getattr(verl, '__version__', '?'), 'torch', torch.__version__, 'vllm', vllm.__version__)"
 loophole export verl --env countdown --n 256 --out $WORK/export

@@ -61,6 +61,7 @@ def main(argv: list[str] | None = None) -> Path:
     ap.add_argument("--precision", default="auto", choices=["auto", "fp16", "bf16", "fp32"])
     ap.add_argument("--vllm", default="none", choices=["none", "colocate", "server"])
     ap.add_argument("--vllm-gpu-mem", type=float, default=0.35)
+    ap.add_argument("--vllm-sleep", action="store_true", help="free vLLM's memory while training (colocate mode)")
     ap.add_argument("--max-tool-calls", type=int, default=10)
     ap.add_argument("--save-steps", type=int, default=50)
     ap.add_argument("--init-adapter", default=None, help="LoRA adapter to continue training instead of a fresh one")
@@ -94,7 +95,8 @@ def main(argv: list[str] | None = None) -> Path:
         bf16=precision == "bf16", fp16=precision == "fp16",
         model_init_kwargs={"dtype": {"bf16": torch.bfloat16, "fp16": torch.float16}.get(precision, torch.float32)},
         use_vllm=a.vllm != "none", vllm_mode=a.vllm if a.vllm != "none" else "colocate",
-        vllm_gpu_memory_utilization=a.vllm_gpu_mem, max_tool_calling_iterations=a.max_tool_calls,
+        vllm_gpu_memory_utilization=a.vllm_gpu_mem, vllm_enable_sleep_mode=a.vllm_sleep,
+        max_tool_calling_iterations=a.max_tool_calls,
         log_completions=False, remove_unused_columns=False)
     peft = LoraConfig(r=a.lora_r, lora_alpha=2 * a.lora_r, lora_dropout=0.0, target_modules="all-linear",
                       task_type="CAUSAL_LM")

@@ -32,6 +32,8 @@ RL environments for LLM agents where every task ships an honest verifier and a l
 
 ## State (update at each checkpoint)
 
-- Done: five environments, sandboxes and probes, detectors, TRL GRPO, SFT and DPO code, verl, OpenRLHF, and Inspect adapters, baselines for Qwen2.5 0.5B, 1.5B, 7B, GRPO seed 0 on mbpp and sqlquest, README.
-- Running 2026-10-23: train2 (seed 1 plus forgetting) in slot a, offline (SFT, DPO, LLM judge, 3B evals, verl and OpenRLHF attempts) in slot c. train3 (seed 2) waits for a free slot.
-- Not done: results renderer, portfolio entry.
+- Done 2026-10-25: five environments, sandboxes and probes, detectors, TRL GRPO, SFT, DPO, LLM judge, baselines for Qwen2.5 0.5B, 1.5B, 3B, 7B, GRPO three seeds per arm on mbpp and sqlquest, pooled comparisons (`loophole compare`), forgetting test, README with every failure.
+- Headline: SQL order losing query adopted by all three leaky seeds, kept by two (104/104, 102/104), dropped by one; honest seeds removed it by step 20. Pooled leaky minus honest false pass: SQL 3.3 points (1.3 to 5.3), MBPP+ 2.7 (0.6 to 4.9).
+- Running: attempts3 in slot c (verl and OpenRLHF in clean Python 3.12 venvs, colocated 3B repo GRPO capped at 90 minutes per arm).
+- Kaggle lessons: download a finished slot with `kaggle kernels output owner/kernel/N --page-size 200` before reusing the slot; kernels check CODE_HASH.
+- Not done: portfolio entry (needs Tanay's yes to make the repo public).

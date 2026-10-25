@@ -157,6 +157,8 @@ def repo_colocated_3b(steps: int = 10) -> list[str]:
 
 
 PLANS = {
+    # verl's third attempt reached its trainer and lacked TransferQueue, which only the verl-core extra installs.
+    "verl4": ["bash src/kaggle/attempts/verl.sh"],
     "attempts3": ["bash src/kaggle/attempts/verl.sh", "bash src/kaggle/attempts/openrlhf.sh", *repo_colocated_3b()],
     # Forgetting: continue the seed 1 honest SQL adapter (shipped with the code) on MBPP+ with the honest
     # verifier, then measure it on both. The comparison is the seed 1 honest SQL adapter's own SQL eval.

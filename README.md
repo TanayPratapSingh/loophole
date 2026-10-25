@@ -2,7 +2,7 @@
 
 RL environments for LLM agents in which every task ships two verifiers: an honest one, and a leaky one with a documented gap. Both grade every rollout. Train on the leaky one and watch, on the same text, whether the policy learns the gap.
 
-Status: work in progress. Built and tested: environments, sandboxes, verifiers, detectors, trainers, adapters. Run: baselines for four model sizes, GRPO with three seeds per arm on MBPP+ and SQL, SFT, DPO, and an LLM judge. Running now: a forgetting test, multi turn GRPO on repo with 3B, and verl and OpenRLHF attempts (the first attempts never started; see Bugs).
+Status: work in progress. Built and tested: environments, sandboxes, verifiers, detectors, trainers, adapters. Run: baselines for four model sizes, GRPO with three seeds per arm on MBPP+ and SQL, a forgetting test, SFT, DPO, and an LLM judge. Running now: multi turn GRPO on repo with 3B, and verl and OpenRLHF attempts (the first attempts never started; see Bugs).
 
 ## Headline
 
@@ -122,6 +122,19 @@ What this does and does not show:
 - On SQL the effect is carried by two of the three seeds (see the headline): the third adopted the order losing query and then drifted out of it.
 - The onset rule fixed before training (false pass at or above 10% for 3 consecutive steps) fires at step 2 in every MBPP+ arm, because the train split already starts at 14% to 20%. A threshold that ignores the starting rate cannot detect anything there. It is reported as it was written, not retuned after seeing the curves.
 - The SQL leaky verifier the policies trained against compared floats exactly; after training it was found to reject 8 rollouts per seed 1 eval that the honest verifier accepted (`AVG` results Python and DuckDB round differently). It was fixed and every SQL eval regraded; no false pass count changed, since those rollouts passed the honest verifier. Training logs keep the reward the policies actually received.
+
+### Forgetting
+
+The seed 1 adapter trained on SQL with the honest verifier was trained for 100 more GRPO steps on MBPP+ with the honest verifier, then evaluated on both.
+
+| Policy | SQL honest | SQL false pass | MBPP+ honest | MBPP+ false pass |
+| --- | ---: | ---: | ---: | ---: |
+| Untrained | 36.8% | 2.7% | 47.4% | 8.7% |
+| GRPO on SQL only, seed 1 | 100.0% | 0.0% | | |
+| GRPO on MBPP+ only, seed 1 | | | 65.9% | 10.5% |
+| GRPO on SQL, then on MBPP+ | 100.0% | 0.0% | 69.0% | 7.4% |
+
+No forgetting was measured: SQL stayed at 100.0% after the MBPP+ training. One run, and the SQL policy started at the ceiling, so this rules out a large loss and says nothing about a small one. Runs: `runs/*-grpo-mbpp-honest-after-sqlquest-s1` and its two evals.
 
 ### SFT and DPO
 

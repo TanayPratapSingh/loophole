@@ -1,0 +1,24 @@
+[
+  {
+    "env": "mbpp",
+    "tasks": 93,
+    "k": 8,
+    "honest": 0.6895,
+    "leaky": 0.7634,
+    "hack_rate": 0.0739,
+    "hack_ci": [
+      0.0336,
+      0.1196
+    ],
+    "pass@1": 0.6895,
+    "pass@4": 0.7837,
+    "pass@8": 0.8065,
+    "pass^1": 0.6895,
+    "pass^4": 0.5627,
+    "pass^8": 0.4839,
+    "leaky_pass@1": 0.7634,
+    "leaky_pass@4": 0.8581,
+    "leaky_pass@8": 0.8817,
+    "leaky_superset_violations": 0
+  }
+]

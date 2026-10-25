@@ -1,0 +1,123 @@
+/usr/local/lib/python3.13/dist-packages/trl/generation/__init__.py:22: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:42: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:48: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  _HAS_STATEFUL_TRAINER_ENGINE = is_vllm_available(min_version="0.28.0")
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_client.py:57: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  _HAS_RESET_PREFIX_CACHE_SUCCESS = is_vllm_available(min_version="0.26.0")
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py:42: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if is_vllm_available():
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+<unknown>:5: SyntaxWarning: invalid escape sequence '\w'
+<unknown>:4: SyntaxWarning: invalid escape sequence '\.'
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1051.73it/s]
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<05:56,  1.21it/s]Loading weights:  17%|█▋        | 75/434 [00:00<00:03, 101.82it/s]Loading weights:  24%|██▎       | 103/434 [00:01<00:02, 116.06it/s]Loading weights:  29%|██▉       | 126/434 [00:01<00:02, 119.44it/s]Loading weights:  34%|███▍      | 147/434 [00:01<00:02, 129.22it/s]Loading weights:  38%|███▊      | 165/434 [00:01<00:02, 130.32it/s]Loading weights:  42%|████▏     | 183/434 [00:01<00:02, 125.35it/s]Loading weights:  46%|████▌     | 198/434 [00:01<00:01, 129.93it/s]Loading weights:  50%|█████     | 219/434 [00:01<00:01, 143.47it/s]Loading weights:  54%|█████▍    | 235/434 [00:02<00:01, 138.89it/s]Loading weights:  59%|█████▉    | 255/434 [00:02<00:01, 148.53it/s]Loading weights:  62%|██████▏   | 271/434 [00:02<00:01, 139.85it/s]Loading weights:  67%|██████▋   | 291/434 [00:02<00:00, 144.26it/s]Loading weights:  71%|███████   | 307/434 [00:02<00:00, 147.54it/s]Loading weights:  74%|███████▍  | 323/434 [00:02<00:00, 142.93it/s]Loading weights:  78%|███████▊  | 339/434 [00:02<00:00, 129.48it/s]Loading weights:  84%|████████▎ | 363/434 [00:03<00:00, 137.74it/s]Loading weights:  87%|████████▋ | 377/434 [00:03<00:00, 137.40it/s]Loading weights:  92%|█████████▏| 400/434 [00:03<00:00, 153.06it/s]Loading weights:  96%|█████████▌| 417/434 [00:03<00:00, 157.37it/s]Loading weights: 100%|██████████| 434/434 [00:03<00:00, 126.72it/s]
+/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py:294: UserWarning: TRL currently supports vLLM versions from 0.22.0 to 0.31.0. You have version 0.32.0 installed. We recommend installing a supported version to avoid compatibility issues.
+  if not is_vllm_available():
+Parse safetensors files:   0%|          | 0/2 [00:00<?, ?it/s]Parse safetensors files:  50%|█████     | 1/2 [00:00<00:00,  3.63it/s]Parse safetensors files: 100%|██████████| 2/2 [00:00<00:00,  6.51it/s]
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 1476.56it/s]
+(MainProcess pid=1246) ERROR 10-25 17:30:02 [fa_utils.py:212] Cannot use FA version 2 is not supported due to FA2 is only supported on devices with compute capability >= 8
+Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:03<00:03,  3.60s/it]
+Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:05<00:00,  2.60s/it]
+Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:05<00:00,  2.75s/it]
+
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/5 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  20%|██        | 1/5 [00:01<00:04,  1.13s/it]Capturing CUDA graphs (PIECEWISE):  40%|████      | 2/5 [00:02<00:03,  1.09s/it]Capturing CUDA graphs (PIECEWISE):  80%|████████  | 4/5 [00:02<00:00,  2.20it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 5/5 [00:03<00:00,  1.64it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 5/5 [00:03<00:00,  1.52it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/2 [00:00<?, ?it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00, 16.10it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00, 16.07it/s]
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 203, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/kaggle/working/src/loophole/train/grpo.py", line 129, in <module>
+[rank0]:     main()
+[rank0]:     ~~~~^^
+[rank0]:   File "/kaggle/working/src/loophole/train/grpo.py", line 117, in main
+[rank0]:     trainer = GRPOTrainer(model=model, reward_funcs=[reward], args=cfg,
+[rank0]:                           train_dataset=Dataset.from_list(to_rows(tasks)), peft_config=peft_arg,
+[rank0]:                           environment_factory=factory)
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/trl/trainer/grpo_trainer.py", line 1107, in __init__
+[rank0]:     self.vllm_generation = VLLMGeneration(
+[rank0]:                            ~~~~~~~~~~~~~~^
+[rank0]:         model=self.model,
+[rank0]:         ^^^^^^^^^^^^^^^^^
+[rank0]:     ...<29 lines>...
+[rank0]:         generation_kwargs=args.generation_kwargs,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py", line 287, in __init__
+[rank0]:     self._init_vllm()
+[rank0]:     ~~~~~~~~~~~~~~~^^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/trl/generation/vllm_generation.py", line 347, in _init_vllm
+[rank0]:     self.llm = LLM(
+[rank0]:                ~~~^
+[rank0]:         model=model.name_or_path,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     ...<14 lines>...
+[rank0]:         trust_remote_code=self.trust_remote_code,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/llm.py", line 342, in __init__
+[rank0]:     self.llm_engine = LLMEngine.from_engine_args(
+[rank0]:                       ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[rank0]:         engine_args=engine_args, usage_context=UsageContext.LLM_CLASS
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/llm_engine.py", line 191, in from_engine_args
+[rank0]:     return cls(
+[rank0]:         vllm_config=vllm_config,
+[rank0]:     ...<4 lines>...
+[rank0]:         multiprocess_mode=enable_multiprocessing,
+[rank0]:     )
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/llm_engine.py", line 116, in __init__
+[rank0]:     self.engine_core = EngineCoreClient.make_client(
+[rank0]:                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[rank0]:         multiprocess_mode=multiprocess_mode,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     ...<4 lines>...
+[rank0]:         renderer=renderer,
+[rank0]:         ^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 133, in make_client
+[rank0]:     return InprocClient(vllm_config, executor_class, log_stats)
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py", line 373, in __init__
+[rank0]:     self.engine_core = EngineCore(
+[rank0]:                        ~~~~~~~~~~^
+[rank0]:         vllm_config,
+[rank0]:         ^^^^^^^^^^^^
+[rank0]:     ...<2 lines>...
+[rank0]:         executor_fail_callback=executor_fail_callback,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 157, in __init__
+[rank0]:     kv_cache_config = self._initialize_kv_caches(vllm_config)
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/tracing/otel.py", line 175, in sync_wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core.py", line 326, in _initialize_kv_caches
+[rank0]:     kv_cache_configs = get_kv_cache_configs(
+[rank0]:         vllm_config, kv_cache_specs, available_gpu_memory
+[rank0]:     )
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/core/kv_cache_utils.py", line 2642, in get_kv_cache_configs
+[rank0]:     _check_enough_kv_cache_memory(
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[rank0]:         avail_mem,
+[rank0]:         ^^^^^^^^^^
+[rank0]:     ...<2 lines>...
+[rank0]:         partial(_estimate_max_model_len_from_groups, vllm_config, groups),
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/usr/local/lib/python3.13/dist-packages/vllm/v1/core/kv_cache_utils.py", line 1030, in _check_enough_kv_cache_memory
+[rank0]:     raise ValueError(
+[rank0]:     ...<9 lines>...
+[rank0]:     )
+[rank0]: ValueError: To serve at least one request with the model's max seq len (32768), (1.12 GiB KV cache is needed, which is larger than the available KV cache memory (0.26 GiB). Based on the available memory, the estimated maximum model length is 7440. Try increasing `gpu_memory_utilization` (which also controls CPU memory on the CPU backend) or decreasing `max_model_len` when initializing the engine. See https://docs.vllm.ai/en/latest/configuration/conserving_memory/ for more details.
+[rank0]:[W1025 17:30:26.130657765 ProcessGroupNCCL.cpp:1624] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

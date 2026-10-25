@@ -1,0 +1,55 @@
++ WORK=/kaggle/working
++ python -m pip install -q uv
++ uv venv --python 3.12 /tmp/verlenv
+warning: The `--system` flag has no effect, `uv venv` always ignores virtual environments when finding a Python interpreter; did you mean `--no-managed-python`?
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: /tmp/verlenv
+Activate with: source /tmp/verlenv/bin/activate
++ uv pip install --python /tmp/verlenv/bin/python -q verl vllm
++ tail -20
++ uv pip install --python /tmp/verlenv/bin/python -q -e /kaggle/working/src
++ tail -5
++ /tmp/verlenv/bin/python -c 'import verl, torch, vllm; print('\''verl'\'', getattr(verl, '\''__version__'\'', '\''?'\''), '\''torch'\'', torch.__version__, '\''vllm'\'', vllm.__version__)'
+verl 0.9.1 torch 2.13.0+cu130 vllm 0.31.0
++ loophole export verl --env countdown --n 256 --out /kaggle/working/export
+wrote /kaggle/working/export/countdown/train.parquet
+wrote /kaggle/working/export/countdown/val.parquet
++ export LOOPHOLE_VERIFIER=leaky
++ LOOPHOLE_VERIFIER=leaky
+++ python -c 'import loophole.adapters.verl as m; print(m.__file__)'
++ REWARD=/kaggle/working/src/loophole/adapters/verl.py
++ timeout 2700 /tmp/verlenv/bin/python -m verl.trainer.main_ppo algorithm.adv_estimator=grpo algorithm.use_kl_in_reward=False data.train_files=/kaggle/working/export/countdown/train.parquet data.val_files=/kaggle/working/export/countdown/val.parquet data.train_batch_size=8 data.max_prompt_length=512 data.max_response_length=256 data.filter_overlong_prompts=True actor_rollout_ref.model.path=Qwen/Qwen2.5-0.5B-Instruct actor_rollout_ref.model.use_remove_padding=False actor_rollout_ref.model.enable_gradient_checkpointing=True actor_rollout_ref.actor.optim.lr=1e-6 actor_rollout_ref.actor.ppo_mini_batch_size=8 actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=4 actor_rollout_ref.actor.use_kl_loss=False actor_rollout_ref.rollout.name=vllm actor_rollout_ref.rollout.n=4 actor_rollout_ref.rollout.dtype=float16 actor_rollout_ref.rollout.gpu_memory_utilization=0.4 actor_rollout_ref.rollout.tensor_model_parallel_size=1 actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=4 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=4 custom_reward_function.path=/kaggle/working/src/loophole/adapters/verl.py custom_reward_function.name=compute_score 'trainer.logger=[console]' trainer.project_name=loophole trainer.experiment_name=verl-countdown trainer.n_gpus_per_node=2 trainer.nnodes=1 trainer.total_training_steps=5 trainer.total_epochs=1 trainer.save_freq=-1 trainer.test_freq=-1 trainer.val_before_train=False
+/tmp/verlenv/lib/python3.12/site-packages/verl/trainer/main_ppo.py:180: UserWarning: Disabled critic as algorithm.adv_estimator != gae. If it is not intended, please set critic.enable=True
+  use_critic=need_critic(config),
+2026-10-25 17:26:30,872	WARNING authentication_token_setup.py:85 -- Token authentication is enabled for this Ray cluster. Set RAY_AUTH_MODE=disabled to opt out. For more information, see https://docs.ray.io/en/latest/ray-security/token-auth.html
+2026-10-25 17:26:30,872	INFO authentication_token_setup.py:50 -- Generated new authentication token and saved to /root/.ray/auth_token
+2026-10-25 17:26:36,802	INFO worker.py:2024 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+[validate_config] All configuration checks passed successfully!
+ray init kwargs: {'num_cpus': None, 'runtime_env': {'env_vars': {'NCCL_DEBUG': 'WARN', 'VLLM_LOGGING_LEVEL': 'WARN', 'VLLM_ALLOW_RUNTIME_LORA_UPDATING': 'true', 'VLLM_DISABLE_COMPILE_CACHE': '1', 'HCCL_HOST_SOCKET_PORT_RANGE': 'auto', 'HCCL_NPU_SOCKET_PORT_RANGE': 'auto', 'HSA_NO_SCRATCH_RECLAIM': '1', 'VERL_FULL_DETERMINISM': '0', 'VLLM_BATCH_INVARIANT': '0', 'VERL_RL_INSIGHT_ENABLE': '0'}, 'working_dir': None, 'py_executable': None}}
+Error executing job with overrides: ['algorithm.adv_estimator=grpo', 'algorithm.use_kl_in_reward=False', 'data.train_files=/kaggle/working/export/countdown/train.parquet', 'data.val_files=/kaggle/working/export/countdown/val.parquet', 'data.train_batch_size=8', 'data.max_prompt_length=512', 'data.max_response_length=256', 'data.filter_overlong_prompts=True', 'actor_rollout_ref.model.path=Qwen/Qwen2.5-0.5B-Instruct', 'actor_rollout_ref.model.use_remove_padding=False', 'actor_rollout_ref.model.enable_gradient_checkpointing=True', 'actor_rollout_ref.actor.optim.lr=1e-6', 'actor_rollout_ref.actor.ppo_mini_batch_size=8', 'actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=4', 'actor_rollout_ref.actor.use_kl_loss=False', 'actor_rollout_ref.rollout.name=vllm', 'actor_rollout_ref.rollout.n=4', 'actor_rollout_ref.rollout.dtype=float16', 'actor_rollout_ref.rollout.gpu_memory_utilization=0.4', 'actor_rollout_ref.rollout.tensor_model_parallel_size=1', 'actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=4', 'actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=4', 'custom_reward_function.path=/kaggle/working/src/loophole/adapters/verl.py', 'custom_reward_function.name=compute_score', 'trainer.logger=[console]', 'trainer.project_name=loophole', 'trainer.experiment_name=verl-countdown', 'trainer.n_gpus_per_node=2', 'trainer.nnodes=1', 'trainer.total_training_steps=5', 'trainer.total_epochs=1', 'trainer.save_freq=-1', 'trainer.test_freq=-1', 'trainer.val_before_train=False']
+Traceback (most recent call last):
+  File "/tmp/verlenv/lib/python3.12/site-packages/verl/trainer/main_ppo.py", line 184, in main
+    run_ppo(config, task_runner_class=TaskRunnerV1)
+  File "/tmp/verlenv/lib/python3.12/site-packages/verl/trainer/main_ppo.py", line 93, in run_ppo
+    ray.get(runner.run.remote(config))
+  File "/tmp/verlenv/lib/python3.12/site-packages/ray/_private/auto_init_hook.py", line 22, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/verlenv/lib/python3.12/site-packages/ray/_private/client_mode_hook.py", line 134, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/verlenv/lib/python3.12/site-packages/ray/_private/worker.py", line 3004, in get
+    values, debugger_breakpoint = worker.get_objects(
+                                  ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/verlenv/lib/python3.12/site-packages/ray/_private/worker.py", line 1053, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ModuleNotFoundError): [36mray::TaskRunnerV1.run()[39m (pid=820, ip=172.19.2.2, actor_id=0e0a20cd9063ec8d127eeb2e01000000, repr=<main_ppo.TaskRunnerV1 object at 0x7f4119fd4e30>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/verlenv/lib/python3.12/site-packages/verl/trainer/main_ppo.py", line 137, in run
+    import transfer_queue as tq
+ModuleNotFoundError: No module named 'transfer_queue'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
++ echo 'verl exit code: 1'
+verl exit code: 1

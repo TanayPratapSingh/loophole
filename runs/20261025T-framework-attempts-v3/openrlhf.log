@@ -1,0 +1,46 @@
++ WORK=/kaggle/working
++ python -m pip install -q uv
++ uv venv --python 3.12 /tmp/orlhfenv
+warning: The `--system` flag has no effect, `uv venv` always ignores virtual environments when finding a Python interpreter; did you mean `--no-managed-python`?
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: /tmp/orlhfenv
+Activate with: source /tmp/orlhfenv/bin/activate
++ uv pip install --python /tmp/orlhfenv/bin/python -q 'openrlhf[vllm]'
++ tail -20
+             return self._get_build_requires(config_settings, requirements=[])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           File "/root/.cache/uv/builds-v0/.tmpvptg5n/lib/python3.12/site-packages/setuptools/build_meta.py", line 301, in _get_build_requires
+             self.run_setup()
+           File "/root/.cache/uv/builds-v0/.tmpvptg5n/lib/python3.12/site-packages/setuptools/build_meta.py", line 520, in run_setup
+             super().run_setup(setup_script=setup_script)
+           File "/root/.cache/uv/builds-v0/.tmpvptg5n/lib/python3.12/site-packages/setuptools/build_meta.py", line 317, in run_setup
+             exec(code, locals())  # noqa: S102 # exec is intentional here
+             ^^^^^^^^^^^^^^^^^^^^
+           File "<string>", line 22, in <module>
+         ModuleNotFoundError: No module named 'torch'
+
+hint: `flash-attn` (v2.8.3) was included because `openrlhf` (v0.11.2) depends on `flash-attn`
+
+hint: This error likely indicates that `flash-attn@2.8.3` depends on `torch`, but doesn't declare it as a build dependency. If `flash-attn` is a first-party package, consider adding `torch` to its `build-system.requires`. Otherwise, either add it to your `pyproject.toml` under:
+
+[tool.uv.extra-build-dependencies]
+flash-attn = ["torch"]
+
+or `uv pip install torch` into the environment and re-run with `--no-build-isolation`.
++ uv pip install --python /tmp/orlhfenv/bin/python -q -e /kaggle/working/src
++ tail -5
++ /tmp/orlhfenv/bin/python -c 'import openrlhf, torch, vllm; print('\''openrlhf'\'', getattr(openrlhf, '\''__version__'\'', '\''?'\''), '\''torch'\'', torch.__version__, '\''vllm'\'', vllm.__version__)'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'openrlhf'
++ loophole export openrlhf --env countdown --n 256 --out /kaggle/working/export
+wrote /kaggle/working/export/countdown/train.jsonl
+wrote /kaggle/working/export/countdown/val.jsonl
++ export LOOPHOLE_VERIFIER=leaky
++ LOOPHOLE_VERIFIER=leaky
+++ python -c 'import loophole.adapters.openrlhf as m; print(m.__file__)'
++ REWARD=/kaggle/working/src/loophole/adapters/openrlhf.py
++ timeout 2700 /tmp/orlhfenv/bin/python -m openrlhf.cli.train_ppo_ray --ref_num_nodes 1 --ref_num_gpus_per_node 1 --actor_num_nodes 1 --actor_num_gpus_per_node 1 --vllm_num_engines 1 --vllm_tensor_parallel_size 1 --colocate_all_models --vllm_gpu_memory_utilization 0.4 --pretrain Qwen/Qwen2.5-0.5B-Instruct --remote_rm_url /kaggle/working/src/loophole/adapters/openrlhf.py --save_path /kaggle/working/orlhf-ckpt --micro_train_batch_size 2 --train_batch_size 16 --micro_rollout_batch_size 4 --rollout_batch_size 8 --n_samples_per_prompt 4 --max_epochs 1 --num_episodes 1 --max_samples 64 --prompt_max_len 512 --generate_max_len 256 --zero_stage 2 --actor_learning_rate 1e-6 --init_kl_coef 0 --advantage_estimator group_norm --prompt_data /kaggle/working/export/countdown/train.jsonl --input_key prompt --label_key task --apply_chat_template --gradient_checkpointing
+/tmp/orlhfenv/bin/python: Error while finding module specification for 'openrlhf.cli.train_ppo_ray' (ModuleNotFoundError: No module named 'openrlhf')
++ echo 'openrlhf exit code: 1'
+openrlhf exit code: 1
